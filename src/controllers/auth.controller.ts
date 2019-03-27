@@ -1,6 +1,6 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import userModel from '../models/user.model';
-
+import { Role } from '../models/role.enum';
 /**
  * authController.ts
  * @description :: Server-side logic for managing users.
@@ -14,11 +14,9 @@ export let login = (req: Request, res: Response) => {
     if (err) {
       return res.status(500).json({message: 'Error when getting user.'});
     }
-    // console.log('ispasswordvalid', user.validPassword(req.body.password));
     if (!user || !req.body.password || !user.validPassword(req.body.password)) {
       return res.status(401).json({message: 'Wrong credentials.'});
     }
-
     return res.json({"token": user.generateJWT()});
   });
 };
@@ -52,14 +50,12 @@ export let register = (req: Request, res: Response) => {
   const user = new userModel({
     email: req.body.email,
     name: req.body.name,
-    role: 'user',
+    role: Role.USER,
     isVerified: false,
     password: req.body.password
   });
 
   user.save((err: any, user: any) => {
-    console.log(user);
-    // console.log(registeredUser);
     if (err) {
       return res.status(500).json({
         message: 'Error when creating user',
@@ -89,7 +85,7 @@ export let update = (req: Request, res: Response) => {
     }
     user.email = req.body.email ? req.body.email : user.email;
     user.name = req.body.name ? req.body.name : user.name;
-    user.password= req.body.password ? req.body.password: user.password;
+    user.password = req.body.password ? req.body.password : user.password;
     user.save((err: any, user: any) => {
       if (err) {
         return res.status(500).json({
@@ -115,5 +111,44 @@ export let remove = (req: Request, res: Response) => {
       });
     }
     return res.status(204).json();
+  });
+};
+
+/**
+ * authController.createAdmin()
+ * Creates the first admin based on .env configuration
+ */
+export let createAdmin = (req: Request, res: Response) => {
+  userModel.findOne({role: Role.ADMIN}, (err: any, user: any) => {
+    if (err) {
+      return res.status(500).json({
+        message: 'Error when getting an admin',
+        error: err
+      });
+    }
+
+    if (user) {
+      return res.status(404).json({
+        message: 'Admin User Exists'
+      });
+    } else {
+      const user = new userModel({
+        email: process.env.ADMIN_EMAIL,
+        name: process.env.ADMIN_NAME,
+        role: Role.ADMIN,
+        isVerified: true,
+        password: process.env.ADMIN_PASSWORD,
+      });
+
+      user.save((err: any, user: any) => {
+        if (err) {
+          return res.status(500).json({
+            message: 'Error when Admin user',
+            error: err
+          });
+        }
+        return res.status(201).json({"token": user.generateJWT(user)});
+      });
+    }
   });
 };

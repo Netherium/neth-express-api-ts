@@ -2,6 +2,7 @@ import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { Role } from './role.enum';
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -15,7 +16,7 @@ const userSchema = new Schema({
     required: true
   },
   'role': {
-    type: String,
+    type: Number,
     enum: Role,
     default: Role.USER
   },
@@ -30,7 +31,7 @@ const userSchema = new Schema({
   }
 }, {timestamps: true});
 
-userSchema.methods.toJson = function() {
+userSchema.methods.toJson = () => {
   let obj = this.toObject();
   delete obj.__v;
   delete obj.salt;
@@ -40,24 +41,24 @@ userSchema.methods.toJson = function() {
 
 userSchema.virtual('password')
   .set(function (password: any) {
-    console.log('password inside virtual', password);
     this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha1').toString('hex');
+    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
+    // console.log(crypto.getHashes());
   })
-  .get(function() {
+  .get(function () {
     return this.hash;
   });
 
 userSchema.methods.validPassword = function (password: any) {
-  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha1').toString('hex');
+  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
   return this.hash === hash;
 };
 
-userSchema.methods.validateJWT = (token: string) => {
+userSchema.methods.validateJWT = function (token: string) {
   return jwt.decode(token);
 };
 
-userSchema.methods.generateJWT = function(){
+userSchema.methods.generateJWT = function () {
   let expiry = new Date();
   expiry.setDate(parseInt(expiry.getDate() + process.env.JWT_EXPIRATION));
   console.log(

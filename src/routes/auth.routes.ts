@@ -1,7 +1,8 @@
 import * as express from 'express';
 import * as authController from '../controllers/auth.controller';
 import Auth from "../middleware/auth";
-import {Role} from '../models/role.enum';
+import { Role } from '../models/role.enum';
+
 const router = express.Router();
 
 /*
@@ -9,7 +10,6 @@ const router = express.Router();
  */
 router.post('/login', authController.login);
 
-//TODO protect route
 /*
  * GET
  */
@@ -25,5 +25,10 @@ router.post('/register', authController.register);
  * PUT
  */
 // router.put('/profile', authController.update);
+
+/*
+ * GET
+ */
+router.get('/createadmin', authController.createAdmin);
 
 export default router;
