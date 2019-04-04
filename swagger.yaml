@@ -1,0 +1,385 @@
+openapi: 3.0.1
+info:
+  title: Neth-Express-Api-TS
+  description: >-
+    <h3>A REST Api written in Typescript using Express</h3> <p>Provides JWT
+    Bearer Token authentication with  access control lists<br> Protected routes
+    will need a `jwt-token`<br> Full repo on
+    [github](https://github.com/Netherium/neth-express-api-ts)<br> Made with ❤
+    by [Netherium](https://github.com/Netherium)</p>
+  contact:
+    email: gerpis@gmail.com
+  license:
+    name: MIT license
+    url: 'https://opensource.org/licenses/MIT'
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:4000/api'
+tags:
+  - name: auth
+    description: Operations for authorizing
+  - name: user
+    description: Operations for user <b>(Requires token with ADMIN role)</b>
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      description: Login existing user
+      operationId: authLogin
+      requestBody:
+        description: AuthUser object to login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+        required: true
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '401':
+          description: Wrong credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error when creating user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/register:
+    post:
+      tags:
+        - auth
+      description: Register new user
+      operationId: authRegister
+      requestBody:
+        description: AuthUser object to register new User
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+        required: true
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '500':
+          description: Error when creating user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/profile:
+    get:
+      tags:
+        - auth
+      description: Get authorized AuthUser
+      operationId: authGetProfile
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Error when getting user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - auth
+      description: Modify existing user
+      operationId: authModifyProfile
+      requestBody:
+        description: Modify authorized User
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '500':
+          description: Error when getting user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - auth
+      description: Delete authorized User
+      operationId: authDeleteProfile
+      responses:
+        '204':
+          description: Success
+          content: {}
+        '404':
+          description: No such user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error when getting user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - Bearer: []
+  /auth/createadmin:
+    post:
+      tags:
+        - auth
+      description: Create User with role `ADMIN` if it does not exist
+      operationId: authCreateAdmin
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '404':
+          description: Admin already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Error when creating user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /user:
+    get:
+      tags:
+        - user
+      description: Get list of User
+      operationId: listUser
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '500':
+          description: Error when getting user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - user
+      description: Create new user
+      operationId: addUser
+      requestBody:
+        description: User object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+      security:
+        - Bearer: []
+  '/user/{userId}':
+    get:
+      tags:
+        - user
+      description: Get a single User
+      operationId: showUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid ID supplied
+          content: {}
+        '404':
+          description: Pet not found
+          content: {}
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - user
+      description: Update a single user
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Error when getting user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - user
+      description: Delete a single user
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to update
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Success
+        '500':
+          description: Error when getting user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - Bearer: []
+components:
+  schemas:
+    User:
+      required:
+        - email
+        - name
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          example: admin@admin.com
+        name:
+          type: string
+          example: JOHN DOE
+        role:
+          type: string
+          description: |-
+            Roles for access control list
+            <ul>
+             <li>USER</li>
+             <li>DESKUSER</li>
+             <li>ADMIN</li>
+            </ul>
+          enum:
+            - USER
+            - DESKUSER
+            - ADMIN
+        isVerified:
+          type: boolean
+        password:
+          type: string
+          writeOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    AuthUser:
+      required:
+        - email
+        - name
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+          example: test@test.com
+        name:
+          type: string
+          example: JOHN DOE
+        password:
+          type: string
+          example: qwerty
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >-
+        To access certain routes of API a valid JWT token must be passed in authorized methods in the 'Authorization' header.<br>
+
+        Get a valid JWT token from `/auth/login`<br>
+
+        Paste token in the following format <b>xxxxxx.yyyyyyy.zzzzzz</b> here<br>

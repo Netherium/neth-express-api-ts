@@ -16,11 +16,14 @@ const userSchema = new Schema({
     required: true
   },
   'role': {
-    type: Number,
-    enum: Role,
+    type: String,
+    enum: Object.values(Role),
     default: Role.USER
   },
-  'isVerified': Boolean,
+  'isVerified': {
+    type: Boolean,
+    default: false
+  },
   'salt': {
     type: String,
     required: true
@@ -31,23 +34,23 @@ const userSchema = new Schema({
   }
 }, {timestamps: true});
 
-userSchema.methods.toJson = () => {
-  let obj = this.toObject();
-  delete obj.__v;
-  delete obj.salt;
-  delete obj.hash;
-  return obj;
-};
-
 userSchema.virtual('password')
   .set(function (password: any) {
     this.salt = crypto.randomBytes(16).toString('hex');
     this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
-    // console.log(crypto.getHashes());
   })
   .get(function () {
     return this.hash;
   });
+
+userSchema.set('toJSON', {
+  transform: (doc: any, ret: any) => {
+    delete ret.__v;
+    delete ret.salt;
+    delete ret.hash;
+    return ret;
+  }
+});
 
 userSchema.methods.validPassword = function (password: any) {
   let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
@@ -61,18 +64,12 @@ userSchema.methods.validateJWT = function (token: string) {
 userSchema.methods.generateJWT = function () {
   let expiry = new Date();
   expiry.setDate(parseInt(expiry.getDate() + process.env.JWT_EXPIRATION));
-  console.log(
-    this._id,
-    this.email,
-    this.name,
-    this.createdAt,
-    ~~(expiry.getTime() / 1000)
-  );
 
   return jwt.sign({
     _id: this._id,
     email: this.email,
     name: this.name,
+    role: this.role,
     exp: ~~(expiry.getTime() / 1000)
   }, process.env.secret);
 };
