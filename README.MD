@@ -1,7 +1,10 @@
 # Neth-express-api-ts
 A REST API written in Typescript using [Express](https://github.com/expressjs/express) that tries to adhere to best practices
+
 Provides JWT Bearer Token authentication with basic Access Control Lists (ACL), MongoDB and (soon™) Elasticsearch integration
-Testing/coverage with [Mocha](https://www.npmjs.com/package/mocha),[chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)  
+
+Testing/coverage with [Mocha](https://www.npmjs.com/package/mocha),[chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
+  
 Made with ❤ by [Netherium](https://github.com/Netherium)
 
 ## Features
