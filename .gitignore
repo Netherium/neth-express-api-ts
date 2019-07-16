@@ -30,11 +30,10 @@
 /connect.lock
 /coverage
 /libpeerconnection.log
+/typings
 npm-debug.log
 yarn-error.log
 testem.log
-/typings
-package-lock.json
 .nyc_output
 
 # System Files
