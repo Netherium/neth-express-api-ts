@@ -8,17 +8,16 @@ import * as cors from 'cors';
 import * as mongoose from 'mongoose';
 import * as errorHandler from 'errorhandler';
 import * as swaggerUI from 'swagger-ui-express';
-// import * as swaggerDocument from './swagger.json';
 import * as yaml from 'yamljs'
 
 /**
  * Import controllers
  */
+import { Auth } from './middleware/auth';
+import { Role } from './models/role.enum';
 import { RootController } from './controllers/root.controller';
 import { AuthController } from './controllers/auth.controller';
 import { UserController } from './controllers/user.controller';
-import { Auth } from './middleware/auth';
-import { Role } from './models/role.enum';
 
 class App {
   public express: express.Application;
@@ -37,7 +36,7 @@ class App {
    * Load .env and set logging
    */
   private setupEnvironment() {
-    switch(process.env.NODE_ENV) {
+    switch (process.env.NODE_ENV) {
       case 'production': {
         config({path: resolve(__dirname, "../.env.production")});
         break;
@@ -95,9 +94,8 @@ class App {
    * Register routes
    */
   private routes() {
-    const swaggerDocument = yaml.load('./swagger.yaml');
-    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
     this.express.use('/', new RootController().router);
+    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml')));
     this.express.use('/api/auth', new AuthController().router);
     this.express.use('/api/user', Auth.hasRole([Role.ADMIN]), new UserController().router);
   }
