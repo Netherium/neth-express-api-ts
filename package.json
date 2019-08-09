@@ -7,7 +7,7 @@
     "start": "SET NODE_ENV=production&&tsc && node dist/server.js",
     "dev": "nodemon --exec ts-node -T ./src/server.ts",
     "test": "mocha -r ts-node/register test/*.test.ts --timeout 30000 --exit",
-    "coverage": "nyc mocha -r ts-node/register test/**/*.test.ts --exit"
+    "coverage": "nyc mocha --timeout 30000 -r ts-node/register test/**/*.test.ts --exit"
   },
   "nodemonConfig": {
     "watch": [
