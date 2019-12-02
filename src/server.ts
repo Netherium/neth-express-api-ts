@@ -1,6 +1,6 @@
 import * as express from 'express';
-import { resolve } from "path"
-import { config } from "dotenv"
+import { resolve } from 'path';
+import { config } from 'dotenv';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as logger from 'morgan';
@@ -8,7 +8,7 @@ import * as cors from 'cors';
 import * as mongoose from 'mongoose';
 import * as errorHandler from 'errorhandler';
 import * as swaggerUI from 'swagger-ui-express';
-import * as yaml from 'yamljs'
+import * as yaml from 'yamljs';
 
 /**
  * Import controllers
@@ -18,6 +18,7 @@ import { Role } from './models/role.enum';
 import { RootController } from './controllers/root.controller';
 import { AuthController } from './controllers/auth.controller';
 import { UserController } from './controllers/user.controller';
+import { BookController } from './controllers/book.controller';
 
 class App {
   public express: express.Application;
@@ -38,18 +39,18 @@ class App {
   private setupEnvironment() {
     switch (process.env.NODE_ENV) {
       case 'production': {
-        config({path: resolve(__dirname, "../.env.production")});
+        config({path: resolve(__dirname, '../.env.production')});
         break;
       }
       case 'test': {
         this.express.use(errorHandler());
-        config({path: resolve(__dirname, "../.env.test")});
+        config({path: resolve(__dirname, '../.env.test')});
         break;
       }
       default: {
         this.express.use(logger('dev'));
         this.express.use(errorHandler());
-        config({path: resolve(__dirname, "../.env")});
+        config({path: resolve(__dirname, '../.env')});
         break;
       }
     }
@@ -80,9 +81,9 @@ class App {
    */
   private enableCors() {
     const options: cors.CorsOptions = {
-      allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token", "Authorization"],
+      allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'X-Access-Token', 'Authorization'],
       credentials: true,
-      methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
+      methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
       origin: '*',
       preflightContinue: false
     };
@@ -98,14 +99,15 @@ class App {
     this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml')));
     this.express.use('/api/auth', new AuthController().router);
     this.express.use('/api/user', Auth.hasRole([Role.ADMIN]), new UserController().router);
+    this.express.use('/api/book', new BookController().router);
   }
 
   /**
-   * Catch Mot Found
+   * Catch Not Found
    */
   private catchNotFound() {
     this.express.use((req: express.Request, res: express.Response) => {
-      let err = {message: 'Not Found', status: 404};
+      const err = {message: 'Not Found', status: 404};
       return res.status(err.status).json({
         message: err.message
       });
@@ -116,15 +118,24 @@ class App {
    * Connect to DB and launch app
    */
   private launch() {
-    mongoose.connect(process.env.MONGODB_URL, {useNewUrlParser: true, useCreateIndex: true})
+    // tslint:disable-next-line:object-literal-type-assertion
+    const mongooseOptions: mongoose.ConnectionOptions = {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true
+    };
+    mongoose.connect(process.env.MONGODB_URL, mongooseOptions)
       .then(() => {
+        // tslint:disable-next-line:no-console
         console.info(`MongoDB connected at ${process.env.MONGODB_URL}`);
         this.express.listen(this.express.get('port'), this.express.get('address'), () => {
+          // tslint:disable-next-line
           console.info(`API running at http://${this.express.get('address')}:${this.express.get('port')} in ${this.express.get('env')} mode`);
-          this.express.emit("Express_TS_Started");
+          this.express.emit('Express_TS_Started');
         });
       })
-      .catch(function (err) {
+      .catch((err) => {
         console.error(`MongoDB cannot connect at ${process.env.MONGODB_URL}\nError: ${err}`);
         process.exit(1);
       });

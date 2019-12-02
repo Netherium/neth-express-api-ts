@@ -2,33 +2,40 @@ import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { Role } from './role.enum';
+import { Document } from 'mongoose';
 
 const Schema = mongoose.Schema;
 
+export interface IUser extends Document {
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
 const userSchema = new Schema({
-  'email': {
+  email: {
     type: String,
     required: true,
     unique: true
   },
-  'name': {
+  name: {
     type: String,
     required: true
   },
-  'role': {
+  role: {
     type: String,
     enum: Object.values(Role),
     default: Role.USER
   },
-  'isVerified': {
+  isVerified: {
     type: Boolean,
     default: false
   },
-  'salt': {
+  salt: {
     type: String,
     required: true
   },
-  'hash': {
+  hash: {
     type: String,
     required: true
   }
@@ -36,11 +43,13 @@ const userSchema = new Schema({
 
 userSchema.virtual('password')
   .set(function (password: any) {
-    this.salt = crypto.randomBytes(16).toString('hex');
-    this.hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
+    const user: any = this;
+    user.salt = crypto.randomBytes(16).toString('hex');
+    user.hash = crypto.pbkdf2Sync(password, user.salt, 1000, 256, 'sha256').toString('hex');
   })
   .get(function () {
-    return this.hash;
+    const user: any = this;
+    return user.hash;
   });
 
 userSchema.set('toJSON', {
@@ -52,8 +61,9 @@ userSchema.set('toJSON', {
   }
 });
 
+// tslint:disable:only-arrow-functions
 userSchema.methods.validPassword = function (password: any) {
-  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
+  const hash = crypto.pbkdf2Sync(password, this.salt, 1000, 256, 'sha256').toString('hex');
   return this.hash === hash;
 };
 
@@ -62,14 +72,14 @@ userSchema.methods.validateJWT = function (token: string) {
 };
 
 userSchema.methods.generateJWT = function () {
-  let expiry = new Date();
+  const expiry = new Date();
   expiry.setDate(parseInt(expiry.getDate() + process.env.JWT_EXPIRATION));
-
+  const user: any = this;
   return jwt.sign({
-    _id: this._id,
-    email: this.email,
-    name: this.name,
-    role: this.role,
+    _id: user._id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
     exp: ~~(expiry.getTime() / 1000)
   }, process.env.secret);
 };

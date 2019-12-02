@@ -1,6 +1,6 @@
-process.env.NODE_ENV = "test";
+process.env.NODE_ENV = 'test';
 import App from '../src/server';
-import * as chai from "chai";
+import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 const app = App.express;
@@ -9,48 +9,48 @@ const should = chai.should();
 
 import userModel from '../src/models/user.model';
 
-let adminDetails = {
-  'email': process.env.ADMIN_EMAIL,
-  'name': process.env.ADMIN_NAME,
-  'password': process.env.ADMIN_PASSWORD
+const adminDetails = {
+  email: process.env.ADMIN_EMAIL,
+  name: process.env.ADMIN_NAME,
+  password: process.env.ADMIN_PASSWORD
 };
 
-let registerDetails = {
-  'email': 'testregister@email.com',
-  'name': 'TestRegister',
-  'password': 'qwerty'
+const registerDetails = {
+  email: 'testregister@email.com',
+  name: 'TestRegister',
+  password: 'qwerty'
 };
 
-let loginDetails = {
-  'email': 'testlogin@email.com',
-  'name': 'Testlogin',
-  'password': 'qwerty'
+const loginDetails = {
+  email: 'testlogin@email.com',
+  name: 'Testlogin',
+  password: 'qwerty'
 };
-let modifiedDetails = {
-  'email': 'testloginmodified@email.com',
-  'name': 'Testloginmodified',
-  'password': 'qwerty1'
+const modifiedDetails = {
+  email: 'testloginmodified@email.com',
+  name: 'Testloginmodified',
+  password: 'qwerty1'
 };
 
-let wrongDetails = {
-  'email': 'testlogin@email.com',
-  'name': 'Testlogin',
-  'password': 'qwe'
+const wrongDetails = {
+  email: 'testlogin@email.com',
+  name: 'Testlogin',
+  password: 'qwe'
 };
 
 // //Ensure app has started
 before((done) => {
-  app.on("Express_TS_Started", () => {
-   done();
+  app.on('Express_TS_Started', () => {
+    done();
   });
 });
 
 describe('Auth', () => {
   before(async () => {
-    await userModel.deleteOne({'email': registerDetails.email});
-    await userModel.deleteOne({'email': loginDetails.email});
-    await userModel.deleteOne({'email': adminDetails.email});
-    await userModel.deleteOne({'email': modifiedDetails.email});
+    await userModel.deleteOne({email: registerDetails.email});
+    await userModel.deleteOne({email: loginDetails.email});
+    await userModel.deleteOne({email: adminDetails.email});
+    await userModel.deleteOne({email: modifiedDetails.email});
     await new userModel(loginDetails).save();
   });
   describe('/POST register', () => {
@@ -87,7 +87,7 @@ describe('Auth', () => {
       const res = await chai.request(app)
         .post('/api/auth/login')
         .send(loginDetails);
-      let result = JSON.parse(res.text);
+      const result = JSON.parse(res.text);
       token = result.token;
     });
     it('it should return user profile', async () => {
@@ -112,11 +112,11 @@ describe('Auth', () => {
   describe('/PUT profile', () => {
     let token = '';
     beforeEach(async () => {
-      await userModel.deleteOne({'email': registerDetails.email});
-      await userModel.deleteOne({'email': loginDetails.email});
-      await userModel.deleteOne({'email': modifiedDetails.email});
+      await userModel.deleteOne({email: registerDetails.email});
+      await userModel.deleteOne({email: loginDetails.email});
+      await userModel.deleteOne({email: modifiedDetails.email});
       await new userModel(loginDetails).save();
-      const res = await  chai.request(app)
+      const res = await chai.request(app)
         .post('/api/auth/login')
         .send(loginDetails);
       token = JSON.parse(res.text).token;
@@ -125,7 +125,7 @@ describe('Auth', () => {
       const res = await chai.request(app)
         .put('/api/auth/profile')
         .set('Authorization', 'Bearer ' + token)
-        .send({"name": modifiedDetails.name});
+        .send({name: modifiedDetails.name});
       res.should.have.status(200);
       res.body.should.be.a('object');
       res.body.should.have.property('name').eqls(modifiedDetails.name);
@@ -134,10 +134,10 @@ describe('Auth', () => {
   describe('/DELETE profile', () => {
     let token = '';
     beforeEach(async () => {
-      await userModel.deleteOne({'email': registerDetails.email});
-      await userModel.deleteOne({'email': loginDetails.email});
-      await userModel.deleteOne({'email': adminDetails.email});
-      await userModel.deleteOne({'email': modifiedDetails.email});
+      await userModel.deleteOne({email: registerDetails.email});
+      await userModel.deleteOne({email: loginDetails.email});
+      await userModel.deleteOne({email: adminDetails.email});
+      await userModel.deleteOne({email: modifiedDetails.email});
       await new userModel(loginDetails).save();
       const res = await chai.request(app)
         .post('/api/auth/login')
@@ -153,14 +153,13 @@ describe('Auth', () => {
   });
   describe('/POST createAdmin', () => {
     before(async () => {
-      await userModel.deleteOne({'email': adminDetails.email});
+      await userModel.deleteOne({email: adminDetails.email});
     });
     it('it should create and admin and return a token', async () => {
       const res = await chai.request(app)
         .post('/api/auth/createadmin');
       res.should.have.status(201);
       chai.use(chaiHttp);
-      const should = chai.should();
       res.body.should.have.property('token');
     });
     it('it should prevent an additional admin from being created', async () => {

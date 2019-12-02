@@ -73,7 +73,8 @@ $ npm run coverage
 ```
 ## Debug 
   
-  If you want to debug TS, you can setup your IDE of choice as in the example below
+  To debug TS without compiling it, you can setup your IDE of choice as in the example below  
+  Note: Running older versions of node  may require attaching `--inspect` before `--require`
 
 <img src="https://raw.githubusercontent.com/Netherium/neth-express-api-ts/master/img/debug_setup.png">
 

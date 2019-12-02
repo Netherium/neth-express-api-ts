@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { Auth } from "../middleware/auth";
+import { Auth } from '../middleware/auth';
 import userModel from '../models/user.model';
 import { Role } from '../models/role.enum';
 
@@ -22,22 +22,22 @@ export class AuthController {
   /**
    * AuthController.login()
    */
-  private getToken = (req: Request, res: Response) => {
-    userModel.findOne({email: req.body.email}, function (err, user: any) {
+  private getToken(req: Request, res: Response) {
+    userModel.findOne({email: req.body.email}, (err, user: any) => {
       if (err) {
         return res.status(500).json({message: 'Error when getting user.'});
       }
       if (!user || !req.body.password || !user.validPassword(req.body.password)) {
         return res.status(401).json({message: 'Wrong credentials.'});
       }
-      return res.status(201).json({"token": user.generateJWT()});
+      return res.status(201).json({token: user.generateJWT()});
     });
-  };
+  }
 
   /**
    * AuthController.profile()
    */
-  private show = (req: Request, res: Response) => {
+  private show(req: Request, res: Response) {
     const id = res.locals.authUser;
     userModel.findOne({_id: id}, (err: any, user: any) => {
       if (err) {
@@ -53,13 +53,13 @@ export class AuthController {
       }
       return res.json(user);
     });
-  };
+  }
 
   /**
    * AuthController.register()
    */
-  private create = (req: Request, res: Response) => {
-    const user = new userModel({
+  private create(req: Request, res: Response) {
+    const newUser = new userModel({
       email: req.body.email,
       name: req.body.name,
       role: Role.USER,
@@ -67,23 +67,23 @@ export class AuthController {
       password: req.body.password
     });
 
-    user.save((err: any, user: any) => {
+    newUser.save((err: any, user: any) => {
       if (err) {
         return res.status(500).json({
           message: 'Error when creating user',
           error: err
         });
       }
-      return res.status(201).json({"token": user.generateJWT(user)});
+      return res.status(201).json({token: user.generateJWT()});
     });
-  };
+  }
 
   /**
    * AuthController.update()
    */
-  private update = (req: Request, res: Response) => {
-    const id = res.locals.authUser;
-    userModel.findOne({_id: id}, (err: any, user: any) => {
+  private update(req: Request, res: Response) {
+    const locUser = res.locals.authUser;
+    userModel.findOne({_id: locUser._id}, (err: any, user: any) => {
       if (err) {
         return res.status(500).json({
           message: 'Error when getting user',
@@ -97,24 +97,24 @@ export class AuthController {
       }
       user.name = req.body.name ? req.body.name : user.name;
       if (req.body.password) {
-        user.password = req.body.password
+        user.password = req.body.password;
       }
-      user.save((err: any, user: any) => {
-        if (err) {
+      userModel.findByIdAndUpdate(locUser._id, user, (cbErr: any) => {
+        if (cbErr) {
           return res.status(500).json({
             message: 'Error when updating user.',
-            error: err
+            error: cbErr
           });
         }
         return res.json(user);
       });
     });
-  };
+  }
 
   /**
    * AuthController.remove()
    */
-  private remove = (req: Request, res: Response) => {
+  private remove(req: Request, res: Response) {
     const id = res.locals.authUser;
     userModel.findByIdAndDelete(id, (err: any, user: any) => {
       if (err) {
@@ -130,13 +130,13 @@ export class AuthController {
       }
       return res.status(204).json();
     });
-  };
+  }
 
   /**
    * AuthController.createAdmin()
    * Creates the first admin based on .env configuration
    */
-  private createAdmin = (req: Request, res: Response) => {
+  private createAdmin(req: Request, res: Response) {
     userModel.findOne({role: Role.ADMIN}, (err: any, user: any) => {
       if (err) {
         return res.status(500).json({
@@ -149,7 +149,7 @@ export class AuthController {
           message: 'Admin already exists'
         });
       } else {
-        const user = new userModel({
+        const newUser = new userModel({
           email: process.env.ADMIN_EMAIL,
           name: process.env.ADMIN_NAME,
           role: Role.ADMIN,
@@ -157,14 +157,14 @@ export class AuthController {
           password: process.env.ADMIN_PASSWORD,
         });
 
-        user.save((err: any, user: any) => {
+        newUser.save((saveErr: any, savedUser: any) => {
           if (err) {
             return res.status(500).json({
               message: 'Error when saving admin',
               error: err
             });
           }
-          return res.status(201).json({"token": user.generateJWT(user)});
+          return res.status(201).json({token: savedUser.generateJWT()});
         });
       }
     });

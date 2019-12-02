@@ -1,6 +1,6 @@
-process.env.NODE_ENV = "test";
+process.env.NODE_ENV = 'test';
 import App from '../src/server';
-import * as chai from "chai";
+import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 const app = App.express;
@@ -12,33 +12,33 @@ import { Role } from '../src/models/role.enum';
 import userModel from '../src/models/user.model';
 
 
-let adminUserDetails = {
-  'email': process.env.ADMIN_EMAIL,
-  'name': process.env.ADMIN_NAME,
-  'password': process.env.ADMIN_PASSWORD,
-  'role': Role.ADMIN
+const adminUserDetails = {
+  email: process.env.ADMIN_EMAIL,
+  name: process.env.ADMIN_NAME,
+  password: process.env.ADMIN_PASSWORD,
+  role: Role.ADMIN
 };
 
-let deskUserDetails = {
-  'email': 'testregister@email.com',
-  'name': 'TestRegister',
-  'password': 'qwerty',
-  'role': Role.DESKUSER
+const deskUserDetails = {
+  email: 'testregister@email.com',
+  name: 'TestRegister',
+  password: 'qwerty',
+  role: Role.DESKUSER
 };
 
-let simpleUserDetails = {
-  'email': 'testlogin@email.com',
-  'name': 'Testlogin',
-  'password': 'qwerty'
+const simpleUserDetails = {
+  email: 'testlogin@email.com',
+  name: 'Testlogin',
+  password: 'qwerty'
 };
 
-let modifiedSimpleUserDetails = {
-  'email': 'testlogin@email.com',
-  'name': 'Testloginmodified',
-  'password': 'qwerty'
+const modifiedSimpleUserDetails = {
+  email: 'testlogin@email.com',
+  name: 'Testloginmodified',
+  password: 'qwerty'
 };
 
-let falseUID = '5ca4ab6f3f86e02af8e1a5a3';
+const falseUID = '5ca4ab6f3f86e02af8e1a5a3';
 
 describe('User', () => {
   before(async () => {
@@ -50,11 +50,11 @@ describe('User', () => {
     let tokenAdmin = '';
     let tokenSimple = '';
     before(async () => {
-      const res1 = await  chai.request(app)
+      const res1 = await chai.request(app)
         .post('/api/auth/login')
         .send(adminUserDetails);
       tokenAdmin = JSON.parse(res1.text).token;
-      const res2 = await  chai.request(app)
+      const res2 = await chai.request(app)
         .post('/api/auth/login')
         .send(simpleUserDetails);
       tokenSimple = JSON.parse(res2.text).token;
@@ -80,11 +80,11 @@ describe('User', () => {
     let tokenAdmin = '';
     let user: any;
     before(async () => {
-      const res1 = await  chai.request(app)
+      const res1 = await chai.request(app)
         .post('/api/auth/login')
         .send(adminUserDetails);
       tokenAdmin = JSON.parse(res1.text).token;
-      user = await userModel.findOne({'email': adminUserDetails.email});
+      user = await userModel.findOne({email: adminUserDetails.email});
     });
     it('it should return a single user', async () => {
       const res = await chai.request(app)
@@ -111,7 +111,7 @@ describe('User', () => {
   describe('/POST user', () => {
     let tokenAdmin = '';
     before(async () => {
-      const res1 = await  chai.request(app)
+      const res1 = await chai.request(app)
         .post('/api/auth/login')
         .send(adminUserDetails);
       tokenAdmin = JSON.parse(res1.text).token;
@@ -136,11 +136,11 @@ describe('User', () => {
     let tokenAdmin = '';
     let user: any;
     before(async () => {
-      const res1 = await  chai.request(app)
+      const res1 = await chai.request(app)
         .post('/api/auth/login')
         .send(adminUserDetails);
       tokenAdmin = JSON.parse(res1.text).token;
-      user = await userModel.findOne({'email': simpleUserDetails.email});
+      user = await userModel.findOne({email: simpleUserDetails.email});
     });
     it('it should modify simpleLoginUser', async () => {
       const res = await chai.request(app)
@@ -162,11 +162,11 @@ describe('User', () => {
     let tokenAdmin = '';
     let user: any;
     before(async () => {
-      const res1 = await  chai.request(app)
+      const res1 = await chai.request(app)
         .post('/api/auth/login')
         .send(adminUserDetails);
       tokenAdmin = JSON.parse(res1.text).token;
-      user = await userModel.findOne({'email': modifiedSimpleUserDetails.email});
+      user = await userModel.findOne({email: modifiedSimpleUserDetails.email});
     });
     it('it should delete modifiedSimpleUser', async () => {
       const res = await chai.request(app)

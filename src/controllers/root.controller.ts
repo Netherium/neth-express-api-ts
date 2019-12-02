@@ -7,7 +7,9 @@ export class RootController {
     this.router.get('/', this.init);
   }
 
-  private init = (req: Request, res: Response) => {
-    return res.status(200).json({'message': `Welcome to Neth-Express-Api-TS. You can find endpoints documentation http://${process.env.ADDRESS}:${process.env.PORT}/api/docs`});
+  private init(req: Request, res: Response) {
+    return res.status(200).json(
+      // tslint:disable-next-line:max-line-length
+      {message: `Welcome to Neth-Express-Api-TS. You can find endpoints documentation http://${process.env.ADDRESS}:${process.env.PORT}/api/docs`});
   }
 }
