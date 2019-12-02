@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import userModel from '../models/user.model';
-import BookModel from '../models/book.model';
+
 
 /**
  * userController.ts
