@@ -7,7 +7,9 @@
     "start": "SET NODE_ENV=production&&tsc && node dist/server.js",
     "dev": "nodemon --exec ts-node -T ./src/server.ts",
     "test": "mocha -r ts-node/register/transpile-only test/*.test.ts --timeout 30000 --exit",
-    "coverage": "nyc mocha --timeout 30000 -r ts-node/register/transpile-only test/**/*.test.ts --exit"
+    "test:coverage": "nyc npm run test",
+    "make:badges": "echo true > .buildstatus && jest-badges-readme",
+    "make:readme": "npm run test:coverage && npm run make:badges"
   },
   "nodemonConfig": {
     "watch": [
@@ -32,9 +34,10 @@
       "ts-node/register"
     ],
     "reporter": [
+      "json-summary",
       "lcov",
-      "text",
-      "html"
+      "html",
+      "text"
     ],
     "sourceMap": true,
     "instrument": true
@@ -55,6 +58,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@olavoparno/jest-badges-readme": "^1.4.2",
     "@types/body-parser": "^1.19.0",
     "@types/compression": "0.0.36",
     "@types/cors": "^2.8.6",

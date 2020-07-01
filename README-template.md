@@ -68,8 +68,8 @@ Made with ❤ by [Netherium](https://github.com/Netherium)
 
 ## Status
 
-![Lines](https://img.shields.io/badge/Coverage-61.45%25-red.svg "Lines Coverage")
-![BuildStatus](https://img.shields.io/badge/Build-Passing-brightgreen.svg "Building Status")
+![Lines](#lines# "Lines Coverage")
+![BuildStatus](#buildstatus# "Building Status")
 
 
 ## Basic Routes
