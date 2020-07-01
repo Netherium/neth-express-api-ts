@@ -2,6 +2,8 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "module": "commonjs",
     "target": "es6",
     "noImplicitAny": true,

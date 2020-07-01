@@ -6,7 +6,7 @@
     "deprecation": {
       "severity": "warning"
     },
-    "space-before-function-paren": ["error", {
+    "space-before-function-paren": [false, {
       "anonymous": "never",
       "named": "always",
       "asyncArrow": "always"

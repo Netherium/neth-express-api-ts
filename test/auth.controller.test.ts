@@ -1,13 +1,27 @@
 process.env.NODE_ENV = 'test';
 import App from '../src/server';
 import * as chai from 'chai';
+
+import UserModel from '../src/models/user.model';
+import RoleModel from '../src/models/role.model';
+import { Document } from 'mongoose';
 import chaiHttp = require('chai-http');
 
-const app = App.express;
 chai.use(chaiHttp);
 const should = chai.should();
+const app = App.express;
 
-import userModel from '../src/models/user.model';
+const publicRoleDetails = {
+  name: 'Public',
+  description: 'Unauthenticated user',
+  isAuthenticated: false
+};
+
+const adminRoleDetails = {
+  name: 'Admin',
+  description: 'Top level authenticated user',
+  isAuthenticated: true
+};
 
 const adminDetails = {
   email: process.env.ADMIN_EMAIL,
@@ -46,21 +60,29 @@ before((done) => {
 });
 
 describe('Auth', () => {
+  let publicRole: Document;
+  let adminRole: Document;
   before(async () => {
-    await userModel.deleteOne({email: registerDetails.email});
-    await userModel.deleteOne({email: loginDetails.email});
-    await userModel.deleteOne({email: adminDetails.email});
-    await userModel.deleteOne({email: modifiedDetails.email});
-    await new userModel(loginDetails).save();
+    await UserModel.deleteOne({email: registerDetails.email});
+    await UserModel.deleteOne({email: loginDetails.email});
+    await UserModel.deleteOne({email: adminDetails.email});
+    await UserModel.deleteOne({email: modifiedDetails.email});
+    await RoleModel.deleteOne({name: publicRoleDetails.name});
+    await RoleModel.deleteOne({name: adminRoleDetails.name});
+    publicRole = await new RoleModel(publicRoleDetails).save();
+    adminRole = await new RoleModel(adminRoleDetails).save();
+    await new UserModel({...loginDetails, role: publicRole}).save();
   });
   describe('/POST register', () => {
-    it('it should register a user and return a token', async () => {
+    it('it should register a user and return a user object', async () => {
       const res = await chai.request(app)
         .post('/api/auth/register')
         .send(registerDetails);
       res.should.have.status(201);
       res.body.should.be.a('object');
-      res.body.should.have.property('token');
+      res.body.should.have.property('_id');
+      res.body.should.have.property('email').eql(registerDetails.email);
+      res.body.should.have.property('name').eql(registerDetails.name);
     });
   });
   describe('/POST login', () => {
@@ -78,7 +100,7 @@ describe('Auth', () => {
         .send(wrongDetails);
       res.should.have.status(401);
       res.body.should.be.a('object');
-      res.body.should.have.property('message').eql('Wrong credentials.');
+      res.body.should.have.property('message').eql('Unauthorized');
     });
   });
   describe('/GET profile', () => {
@@ -111,11 +133,11 @@ describe('Auth', () => {
   });
   describe('/PUT profile', () => {
     let token = '';
-    beforeEach(async () => {
-      await userModel.deleteOne({email: registerDetails.email});
-      await userModel.deleteOne({email: loginDetails.email});
-      await userModel.deleteOne({email: modifiedDetails.email});
-      await new userModel(loginDetails).save();
+    before(async () => {
+      await UserModel.deleteOne({email: registerDetails.email});
+      await UserModel.deleteOne({email: loginDetails.email});
+      await UserModel.deleteOne({email: modifiedDetails.email});
+      await new UserModel({...loginDetails, role: publicRole}).save();
       const res = await chai.request(app)
         .post('/api/auth/login')
         .send(loginDetails);
@@ -133,12 +155,12 @@ describe('Auth', () => {
   });
   describe('/DELETE profile', () => {
     let token = '';
-    beforeEach(async () => {
-      await userModel.deleteOne({email: registerDetails.email});
-      await userModel.deleteOne({email: loginDetails.email});
-      await userModel.deleteOne({email: adminDetails.email});
-      await userModel.deleteOne({email: modifiedDetails.email});
-      await new userModel(loginDetails).save();
+    before(async () => {
+      await UserModel.deleteOne({email: registerDetails.email});
+      await UserModel.deleteOne({email: loginDetails.email});
+      await UserModel.deleteOne({email: adminDetails.email});
+      await UserModel.deleteOne({email: modifiedDetails.email});
+      await new UserModel({...loginDetails, role: publicRole}).save();
       const res = await chai.request(app)
         .post('/api/auth/login')
         .send(loginDetails);
@@ -151,20 +173,22 @@ describe('Auth', () => {
       res.should.have.status(204);
     });
   });
-  describe('/POST createAdmin', () => {
+  describe('/POST init', () => {
     before(async () => {
-      await userModel.deleteOne({email: adminDetails.email});
+      await UserModel.deleteOne({email: adminDetails.email});
+      await publicRole.remove();
+      await adminRole.remove();
     });
-    it('it should create and admin and return a token', async () => {
+    it('it should create 2 roles and 1 admin return an object', async () => {
       const res = await chai.request(app)
-        .post('/api/auth/createadmin');
+        .get('/api/auth/init');
       res.should.have.status(201);
-      chai.use(chaiHttp);
-      res.body.should.have.property('token');
+      res.body.should.have.property('roles').to.have.length(2);
+      res.body.should.have.property('admin').property('email').eqls(adminDetails.email);
     });
     it('it should prevent an additional admin from being created', async () => {
       const res = await chai.request(app)
-        .post('/api/auth/createadmin');
+        .get('/api/auth/init');
       res.should.have.status(500);
     });
   });

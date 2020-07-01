@@ -1,74 +1,72 @@
 import { Request, Response } from 'express';
-import UserModel from '../models/user.model';
+import RoleModel from '../models/role.model';
 import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK } from '../helpers/http.responses';
 
-/** UserController.ts */
-export class UserController {
-  /** UserController.list() */
+/** RoleController.ts */
+export class RoleController {
+  /** RoleController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
-      const userCollection = await UserModel.find();
-      return HTTP_OK(res, userCollection);
+      const roleCollection = await RoleModel.find();
+      return HTTP_OK(res, roleCollection);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
 
-  /** UserController.show() */
+  /** RoleController.show() */
   public async show(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const userEntry = await UserModel.findOne({_id: id});
-      if (!userEntry) {
+      const roleEntry = await RoleModel.findOne({_id: id});
+      if (!roleEntry) {
         return HTTP_NOT_FOUND(res);
       }
-      return HTTP_OK(res, userEntry);
+      return HTTP_OK(res, roleEntry);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
 
-  /** UserController.create() */
+  /** RoleController.create() */
   public async create(req: Request, res: Response): Promise<Response> {
-    const userEntry = new UserModel({
-      email: req.body.email,
+    const roleEntry = new RoleModel({
       name: req.body.name,
-      isVerified: req.body.isVerified,
-      password: req.body.password
+      isAuthenticated: req.body.isAuthenticated,
+      description: req.body.description
     });
     try {
-      const userCreated = await userEntry.save();
-      return HTTP_CREATED(res, userCreated);
+      const roleCreated = await roleEntry.save();
+      return HTTP_CREATED(res, roleCreated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
 
-  /** UserController.update() */
+  /** RoleController.update() */
   public async update(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
-    const userUpdateData = {
-      ...(req.body.email) && {email: req.body.email},
+    const roleUpdateData = {
       ...(req.body.name) && {name: req.body.name},
-      ...(req.body.isVerified) && {isVerified: req.body.isVerified},
-      ...(req.body.password) && {password: req.body.password}
+      ...(req.body.isAuthenticated) && {isAuthenticated: req.body.isAuthenticated},
+      ...(req.body.description) && {description: req.body.description}
     };
     try {
-      const userUpdated = await UserModel.findByIdAndUpdate(id, userUpdateData, {new: true});
-      if (!userUpdated) {
+      const roleUpdated = await RoleModel.findByIdAndUpdate(id, roleUpdateData, {new: true});
+      if (!roleUpdated) {
         return HTTP_NOT_FOUND(res);
       }
-      return HTTP_OK(res, userUpdated);
+      return HTTP_OK(res, roleUpdated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
 
-  /** UserController.delete() */
+  /** RoleController.delete() */
   public async delete(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      await UserModel.findByIdAndDelete(id);
+      await RoleModel.findByIdAndDelete(id);
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

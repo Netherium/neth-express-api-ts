@@ -1,15 +1,13 @@
-import { Request, Response, Router } from 'express';
+import { Request, Response } from 'express';
+import { HTTP_OK } from '../helpers/http.responses';
 
 export class RootController {
-  public router = Router();
 
-  constructor() {
-    this.router.get('/', this.init);
+  /**
+   * RootController.show()
+   */
+  public async show(req: Request, res: Response) {
+    return HTTP_OK(res, {message: `Welcome to Neth-Express-Api-TS. You can find endpoints documentation http://${process.env.ADDRESS}:${process.env.PORT}/api/docs`});
   }
 
-  private init(req: Request, res: Response) {
-    return res.status(200).json(
-      // tslint:disable-next-line:max-line-length
-      {message: `Welcome to Neth-Express-Api-TS. You can find endpoints documentation http://${process.env.ADDRESS}:${process.env.PORT}/api/docs`});
-  }
 }

@@ -1,16 +1,8 @@
 import * as mongoose from 'mongoose';
-import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
-import { Role } from './role.enum';
-import { Document } from 'mongoose';
+import * as crypto from 'crypto';
 
 const Schema = mongoose.Schema;
-
-export interface IUser extends Document {
-  email: string;
-  firstName: string;
-  lastName: string;
-}
 
 const userSchema = new Schema({
   email: {
@@ -23,9 +15,8 @@ const userSchema = new Schema({
     required: true
   },
   role: {
-    type: String,
-    enum: Object.values(Role),
-    default: Role.USER
+    type: Schema.Types.ObjectId,
+    ref: 'role'
   },
   isVerified: {
     type: Boolean,
@@ -71,15 +62,16 @@ userSchema.methods.validateJWT = function (token: string) {
   return jwt.decode(token);
 };
 
-userSchema.methods.generateJWT = function () {
+userSchema.methods.generateJWT = async function () {
   const expiry = new Date();
-  expiry.setDate(parseInt(expiry.getDate() + process.env.JWT_EXPIRATION));
+  expiry.setDate(parseInt(expiry.getDate() + process.env.JWT_EXPIRATION, 10));
   const user: any = this;
   return jwt.sign({
     _id: user._id,
     email: user.email,
     name: user.name,
-    role: user.role,
+    role: user.role.name,
+    // tslint:disable-next-line:no-bitwise
     exp: ~~(expiry.getTime() / 1000)
   }, process.env.secret);
 };

@@ -1,172 +1,148 @@
-import { Request, Response, Router } from 'express';
-import { Auth } from '../middleware/auth';
-import userModel from '../models/user.model';
-import { Role } from '../models/role.enum';
+import { Request, Response } from 'express';
+import UserModel from '../models/user.model';
+import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } from '../helpers/http.responses';
+import * as jwt from 'jsonwebtoken';
+import RoleModel from '../models/role.model';
 
 /**
  * auth.controller.ts
  * @description :: Server-side logic for managing users.
  */
 export class AuthController {
-  public router = Router();
-
-  constructor() {
-    this.router.post('/login', this.getToken);
-    this.router.get('/profile', Auth.isAuthenticated(), this.show);
-    this.router.post('/register', this.create);
-    this.router.put('/profile', Auth.isAuthenticated(), this.update);
-    this.router.delete('/profile', Auth.isAuthenticated(), this.remove);
-    this.router.post('/createadmin', this.createAdmin);
-  }
 
   /**
    * AuthController.login()
    */
-  private getToken(req: Request, res: Response) {
-    userModel.findOne({email: req.body.email}, (err, user: any) => {
-      if (err) {
-        return res.status(500).json({message: 'Error when getting user.'});
+  public async getToken(req: Request, res: Response) {
+    try {
+      const userEntry: any = await UserModel.findOne({email: req.body.email}).populate('role');
+      if (!userEntry || !req.body.password || !userEntry.validPassword(req.body.password)) {
+        return HTTP_UNAUTHORIZED(res);
       }
-      if (!user || !req.body.password || !user.validPassword(req.body.password)) {
-        return res.status(401).json({message: 'Wrong credentials.'});
-      }
-      return res.status(201).json({token: user.generateJWT()});
-    });
+      const token = await userEntry.generateJWT();
+      const decoded = jwt.verify(token, process.env.secret);
+      return HTTP_CREATED(res, {token: await userEntry.generateJWT(), decoded: decoded});
+    } catch (err) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, err);
+    }
   }
 
   /**
    * AuthController.profile()
    */
-  private show(req: Request, res: Response) {
-    const id = res.locals.authUser;
-    userModel.findOne({_id: id}, (err: any, user: any) => {
-      if (err) {
-        return res.status(500).json({
-          message: 'Error when getting user.',
-          error: err
-        });
+  public async show(req: Request, res: Response) {
+    const authUser = res.locals.authUser;
+    try {
+      const userEntry = await UserModel.findOne({_id: authUser._id}).populate('role').exec();
+      if (!userEntry) {
+        return HTTP_NOT_FOUND(res);
       }
-      if (!user) {
-        return res.status(404).json({
-          message: 'No such user'
-        });
-      }
-      return res.json(user);
-    });
+      return HTTP_OK(res, userEntry);
+    } catch (err) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, err);
+    }
   }
 
   /**
    * AuthController.register()
    */
-  private create(req: Request, res: Response) {
-    const newUser = new userModel({
-      email: req.body.email,
-      name: req.body.name,
-      role: Role.USER,
-      isVerified: false,
-      password: req.body.password
-    });
-
-    newUser.save((err: any, user: any) => {
-      if (err) {
-        return res.status(500).json({
-          message: 'Error when creating user',
-          error: err
-        });
-      }
-      return res.status(201).json({token: user.generateJWT()});
-    });
+  public async create(req: Request, res: Response): Promise<Response> {
+    try {
+      const publicRole = await RoleModel.findOne({isAuthenticated: false});
+      const userEntry = new UserModel({
+        email: req.body.email,
+        name: req.body.name,
+        role: publicRole,
+        isVerified: false,
+        password: req.body.password
+      });
+      const userCreated = await userEntry.save();
+      return HTTP_CREATED(res, userCreated);
+    } catch (err) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, err);
+    }
   }
 
   /**
    * AuthController.update()
    */
-  private update(req: Request, res: Response) {
-    const locUser = res.locals.authUser;
-    userModel.findOne({_id: locUser._id}, (err: any, user: any) => {
-      if (err) {
-        return res.status(500).json({
-          message: 'Error when getting user',
-          error: err
-        });
+  public async update(req: Request, res: Response) {
+    const authUser = res.locals.authUser;
+    const userEntryModified: any = {
+      ...(req.body.email) && {email: req.body.email},
+      ...(req.body.name) && {name: req.body.name},
+      ...(req.body.password) && {password: req.body.password}
+    };
+    try {
+      const userEntry = await UserModel.findByIdAndUpdate(authUser._id, userEntryModified, {new: true}).populate('role').exec();
+      if (!userEntry) {
+        return HTTP_NOT_FOUND(res);
       }
-      if (!user) {
-        return res.status(404).json({
-          message: 'No such user'
-        });
-      }
-      user.name = req.body.name ? req.body.name : user.name;
-      if (req.body.password) {
-        user.password = req.body.password;
-      }
-      userModel.findByIdAndUpdate(locUser._id, user, (cbErr: any) => {
-        if (cbErr) {
-          return res.status(500).json({
-            message: 'Error when updating user.',
-            error: cbErr
-          });
-        }
-        return res.json(user);
-      });
-    });
+      return HTTP_OK(res, userEntry);
+    } catch (err) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, err);
+    }
   }
 
   /**
-   * AuthController.remove()
+   * AuthController.delete()
    */
-  private remove(req: Request, res: Response) {
+  public async delete(req: Request, res: Response) {
     const id = res.locals.authUser;
-    userModel.findByIdAndDelete(id, (err: any, user: any) => {
-      if (err) {
-        return res.status(500).json({
-          message: 'Error when getting user.',
-          error: err
-        });
-      }
-      if (!user) {
-        return res.status(404).json({
-          message: 'No such user'
-        });
-      }
-      return res.status(204).json();
-    });
+    try {
+      await UserModel.findByIdAndDelete(id);
+      return HTTP_NO_CONTENT(res);
+    } catch (err) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, err);
+    }
   }
 
   /**
-   * AuthController.createAdmin()
-   * Creates the first admin based on .env configuration
+   * AuthController.init()
+   * Initializes the application
+   * - Creates 2 basic roles, 1 Public and 1 Admin
+   * - Creates an Access Control List
+   * - Creates admin user based on .env configuration
    */
-  private createAdmin(req: Request, res: Response) {
-    userModel.findOne({role: Role.ADMIN}, (err: any, user: any) => {
-      if (err) {
-        return res.status(500).json({
-          message: 'Error when getting an admin',
-          error: err
-        });
+  public async init(req: Request, res: Response) {
+    const publicRoleEntry = new RoleModel(
+      {
+        name: 'Public',
+        description: 'Unauthenticated user',
+        isAuthenticated: false
       }
-      if (user) {
-        return res.status(500).json({
-          message: 'Admin already exists'
-        });
-      } else {
-        const newUser = new userModel({
-          email: process.env.ADMIN_EMAIL,
-          name: process.env.ADMIN_NAME,
-          role: Role.ADMIN,
-          isVerified: true,
-          password: process.env.ADMIN_PASSWORD,
-        });
-
-        newUser.save((saveErr: any, savedUser: any) => {
-          if (err) {
-            return res.status(500).json({
-              message: 'Error when saving admin',
-              error: err
-            });
-          }
-          return res.status(201).json({token: savedUser.generateJWT()});
-        });
+    );
+    const adminRoleEntry = new RoleModel(
+      {
+        name: 'Admin',
+        description: 'Top level authenticated user',
+        isAuthenticated: true
       }
+    );
+    const adminUserEntry = new UserModel({
+      email: process.env.ADMIN_EMAIL,
+      name: process.env.ADMIN_NAME,
+      role: adminRoleEntry,
+      isVerified: true,
+      password: process.env.ADMIN_PASSWORD,
     });
+    const userExists = await UserModel.findOne({email: adminUserEntry.get('email')});
+    const rolesExist = await RoleModel.findOne({
+      $or: [
+        {name: publicRoleEntry.get('name')},
+        {name: adminRoleEntry.get('name')}
+      ]
+    }).exec();
+    if (userExists || rolesExist) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, 'Admin or Roles already exist');
+    }
+    try {
+      const publicRoleCreated = await publicRoleEntry.save();
+      const adminRoleCreated = await adminRoleEntry.save();
+      const adminUserCreated = await adminUserEntry.save();
+      return HTTP_CREATED(res, {roles: [publicRoleCreated, adminRoleCreated], admin: adminUserCreated});
+    } catch (err) {
+      return HTTP_INTERNAL_SERVER_ERROR(res, err);
+    }
   }
 }
