@@ -33,7 +33,6 @@ export interface MediaObject {
 }
 
 export class UploadService {
-
   public isLocalProvider: boolean;
 
   constructor() {
@@ -41,7 +40,11 @@ export class UploadService {
   }
 
   private static async localProviderHandler(localPath: string, data: Buffer, action: 'put' | 'delete') {
-    return await fs.writeFile(localPath, data);
+    if (action === 'put') {
+      return await fs.writeFile(localPath, data);
+    } else if (action === 'delete') {
+      return await fs.unlink(localPath);
+    }
   }
 
   private static async remoteProviderHandler(path: string, mime: string, data: Buffer, action: 'put' | 'delete') {
@@ -51,14 +54,22 @@ export class UploadService {
         secretAccessKey: process.env.UPLOAD_PROVIDER_SECRET
       }
     );
-    const params: AWS.S3.PutObjectRequest = {
-      Body: data,
-      Bucket: process.env.UPLOAD_PROVIDER_BUCKET,
-      Key: path,
-      ACL: 'public-read',
-      ContentType: mime
-    };
-    return await s3.putObject(params).promise();
+    if (action === 'put') {
+      const params: AWS.S3.PutObjectRequest = {
+        Body: data,
+        Bucket: process.env.UPLOAD_PROVIDER_BUCKET,
+        Key: path,
+        ACL: 'public-read',
+        ContentType: mime
+      };
+      return await s3.putObject(params).promise();
+    } else if (action === 'delete') {
+      const params: AWS.S3.DeleteObjectRequest = {
+        Bucket: process.env.UPLOAD_PROVIDER_BUCKET,
+        Key: path
+      };
+      return await s3.deleteObject(params).promise();
+    }
   }
 
   public async uploadFile(file: UploadedFile, alternativeText: string = null, caption: string = null) {
@@ -66,19 +77,39 @@ export class UploadService {
       const {mediaObject, fileBuffer, thumbBuffer} = await this.getMediaObjectData(file, alternativeText, caption);
       if (this.isLocalProvider) {
         await UploadService.localProviderHandler(`./${mediaObject.path}`, fileBuffer, 'put');
-        if (isMimeTypePhoto(mediaObject.mime)) {
+        if (mediaObject.hasOwnProperty('thumbnail')) {
           await UploadService.localProviderHandler(`./${mediaObject.thumbnail.path}`, thumbBuffer, 'put');
         }
       } else {
         await UploadService.remoteProviderHandler(`${mediaObject.path}`, mediaObject.mime, fileBuffer, 'put');
-        if (isMimeTypePhoto(mediaObject.mime)) {
+        if (mediaObject.hasOwnProperty('thumbnail')) {
           // tslint:disable-next-line:max-line-length
           await UploadService.remoteProviderHandler(`${mediaObject.thumbnail.path}`, mediaObject.thumbnail.mime, thumbBuffer, 'put');
         }
       }
       return mediaObject;
     } catch (err) {
-      return false;
+      throw Error(err);
+    }
+  }
+
+  public async deleteFile(mediaObject: MediaObject) {
+    try {
+      if (this.isLocalProvider) {
+        await UploadService.localProviderHandler(`./${mediaObject.path}`, null, 'delete');
+        if (mediaObject.hasOwnProperty('thumbnail')) {
+          await UploadService.localProviderHandler(`./${mediaObject.thumbnail.path}`, null, 'delete');
+        }
+      } else {
+        await UploadService.remoteProviderHandler(`${mediaObject.path}`, mediaObject.mime, null, 'delete');
+        if (mediaObject.hasOwnProperty('thumbnail')) {
+          // tslint:disable-next-line:max-line-length
+          await UploadService.remoteProviderHandler(`${mediaObject.thumbnail.path}`, mediaObject.thumbnail.mime, null, 'delete');
+        }
+      }
+      return true;
+    } catch (err) {
+      throw Error(err);
     }
   }
 
@@ -116,6 +147,7 @@ export class UploadService {
     if (isMimeTypePhoto(mediaObject.mime)) {
       const metadata = await sharp(file.data).metadata();
       const thumbnailHash = `thumbnail_${hash}`;
+      // tslint:disable-next-line:max-line-length
       const thumbnailPath = this.isLocalProvider ? `${process.env.UPLOAD_PROVIDER_FOLDER}/${thumbnailHash}${ext}` : `${thumbnailHash}${ext}`;
       const thumbnailUrl = this.isLocalProvider ? `http://${process.env.ADDRESS}:${process.env.PORT}/${thumbnailPath}` : `https://${process.env.UPLOAD_PROVIDER_BUCKET}.${process.env.UPLOAD_PROVIDER_ENDPOINT}/${thumbnailPath}`;
       thumbBuffer = await sharp(file.data).resize(80, 80).toBuffer();
@@ -151,4 +183,3 @@ export function isMimeTypePhoto(mime: string) {
   ];
   return photoTypes.indexOf(mime) > -1;
 }
-

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { Auth } from '../middleware/auth';
 import { RootController } from '../controllers/root.controller';
 
 export class RootRoute {

@@ -1,8 +1,17 @@
 import { Request, Response } from 'express';
-import UserModel from '../models/user.model';
-import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED } from '../helpers/http.responses';
+import {
+  HTTP_CREATED,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_NO_CONTENT,
+  HTTP_NOT_FOUND,
+  HTTP_OK,
+  HTTP_UNAUTHORIZED
+} from '../helpers/http.responses';
 import * as jwt from 'jsonwebtoken';
 import RoleModel from '../models/role.model';
+import UserModel from '../models/user.model';
+import ResourcePermissionModel from '../models/resource-permission.model';
+import { Auth } from '../middleware/auth';
 
 /**
  * auth.controller.ts
@@ -19,9 +28,7 @@ export class AuthController {
       if (!userEntry || !req.body.password || !userEntry.validPassword(req.body.password)) {
         return HTTP_UNAUTHORIZED(res);
       }
-      const token = await userEntry.generateJWT();
-      const decoded = jwt.verify(token, process.env.secret);
-      return HTTP_CREATED(res, {token: await userEntry.generateJWT(), decoded: decoded});
+      return HTTP_CREATED(res, {token: await userEntry.generateJWT()});
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
@@ -90,7 +97,10 @@ export class AuthController {
   public async delete(req: Request, res: Response) {
     const id = res.locals.authUser;
     try {
-      await UserModel.findByIdAndDelete(id);
+      const userDeleted = await UserModel.findByIdAndDelete(id);
+      if (!userDeleted) {
+        return HTTP_NOT_FOUND(res);
+      }
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
@@ -100,9 +110,12 @@ export class AuthController {
   /**
    * AuthController.init()
    * Initializes the application
-   * - Creates 2 basic roles, 1 Public and 1 Admin
-   * - Creates an Access Control List
-   * - Creates admin user based on .env configuration
+   * - Creates 2 basic Roles, 1 Public and 1 Admin
+   * - Creates an admin User based on .env configuration
+   * - Creates a resource permission, with defaults to admin access only,
+   *  for each of the following resources
+   *  'roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'articles'
+   * - Updates Permissions so that will be reflected in all routes instantly
    */
   public async init(req: Request, res: Response) {
     const publicRoleEntry = new RoleModel(
@@ -140,7 +153,37 @@ export class AuthController {
       const publicRoleCreated = await publicRoleEntry.save();
       const adminRoleCreated = await adminRoleEntry.save();
       const adminUserCreated = await adminUserEntry.save();
-      return HTTP_CREATED(res, {roles: [publicRoleCreated, adminRoleCreated], admin: adminUserCreated});
+      const resourceNames = ['roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'articles'];
+      const methodNames = ['list', 'show', 'create', 'update', 'delete'];
+      const resourcesCreated = [];
+      // For each resourceName save a resource-permission that has admin roles to all its methods
+      for (const resourceName of resourceNames) {
+        const resourceEntry = new ResourcePermissionModel({
+          resourceName,
+          methods: methodNames
+            .filter((method) => {
+              if (resourceName !== 'endpoints') {
+                return true;
+              } else {
+                return method === 'list';
+              }
+            })
+            .map((method) => {
+              return {
+                roles: [adminRoleCreated],
+                name: method
+              };
+            })
+        });
+
+        resourcesCreated.push(await resourceEntry.save());
+      }
+      await Auth.updateAppPermissions(req);
+      return HTTP_CREATED(res, {
+        roles: [publicRoleCreated, adminRoleCreated],
+        admin: adminUserCreated,
+        resourcePermissions: resourcesCreated
+      });
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }

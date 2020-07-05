@@ -66,7 +66,10 @@ export class RoleController {
   public async delete(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      await RoleModel.findByIdAndDelete(id);
+      const roleDeleted = await RoleModel.findByIdAndDelete(id);
+      if (!roleDeleted) {
+        return HTTP_NOT_FOUND(res);
+      }
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

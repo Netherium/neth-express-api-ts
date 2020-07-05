@@ -16,7 +16,8 @@ const userSchema = new Schema({
   },
   role: {
     type: Schema.Types.ObjectId,
-    ref: 'role'
+    ref: 'role',
+    required: true
   },
   isVerified: {
     type: Boolean,
@@ -34,9 +35,11 @@ const userSchema = new Schema({
 
 userSchema.virtual('password')
   .set(function (password: any) {
-    const user: any = this;
-    user.salt = crypto.randomBytes(16).toString('hex');
-    user.hash = crypto.pbkdf2Sync(password, user.salt, 1000, 256, 'sha256').toString('hex');
+    if (password) {
+      const user: any = this;
+      user.salt = crypto.randomBytes(16).toString('hex');
+      user.hash = crypto.pbkdf2Sync(password, user.salt, 1000, 256, 'sha256').toString('hex');
+    }
   })
   .get(function () {
     const user: any = this;

@@ -80,7 +80,10 @@ export class ArticleController {
   public async delete(req: Request, res: Response) {
     const id = req.params.id;
     try {
-      await ArticleModel.findByIdAndDelete(id);
+      const articleDeleted = await ArticleModel.findByIdAndDelete(id);
+      if (!articleDeleted) {
+        return HTTP_NOT_FOUND(res);
+      }
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

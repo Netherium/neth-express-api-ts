@@ -4,6 +4,7 @@ import * as chai from 'chai';
 
 import UserModel from '../src/models/user.model';
 import RoleModel from '../src/models/role.model';
+import ResourcePermissionModel from '../src/models/resource-permission.model';
 import { Document } from 'mongoose';
 import chaiHttp = require('chai-http');
 
@@ -173,11 +174,11 @@ describe('Auth', () => {
       res.should.have.status(204);
     });
   });
-  describe('/POST init', () => {
+  describe('/GET init', () => {
     before(async () => {
-      await UserModel.deleteOne({email: adminDetails.email});
-      await publicRole.remove();
-      await adminRole.remove();
+      await UserModel.deleteMany({});
+      await RoleModel.deleteMany({});
+      await ResourcePermissionModel.deleteMany({});
     });
     it('it should create 2 roles and 1 admin return an object', async () => {
       const res = await chai.request(app)

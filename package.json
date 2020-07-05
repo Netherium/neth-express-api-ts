@@ -4,11 +4,12 @@
   "description": "An Express Rest Api written in Typescript that provides convenient authorization, access control lists and routes following best practices.",
   "main": "src/server.ts",
   "scripts": {
-    "start": "SET NODE_ENV=production&&tsc && node dist/server.js",
     "dev": "nodemon --exec ts-node -T ./src/server.ts",
-    "test": "mocha -r ts-node/register/transpile-only test/*.test.ts --timeout 30000 --exit",
+    "build": "tsc && echo true > .buildstatus",
+    "run:prod": "npm run build && SET NODE_ENV=production&&node dist/server.js",
+    "test": "mocha -r ts-node/register test/*.test.ts --timeout 30000 --exit",
     "test:coverage": "nyc npm run test",
-    "make:badges": "echo true > .buildstatus && jest-badges-readme",
+    "make:badges": "jest-badges-readme",
     "make:readme": "npm run test:coverage && npm run make:badges"
   },
   "nodemonConfig": {
@@ -75,7 +76,6 @@
     "@types/yamljs": "^0.2.31",
     "aws-sdk": "^2.708.0",
     "bluebird": "^3.7.2",
-    "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "compression": "^1.7.4",

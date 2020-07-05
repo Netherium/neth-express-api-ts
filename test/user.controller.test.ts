@@ -51,7 +51,7 @@ const modifiedSimpleUserDetails = {
 
 const falseUID = '5ca4ab6f3f86e02af8e1a5a3';
 
-describe('User', () => {
+describe('Users', () => {
   let publicRole: Document;
   let adminRole: Document;
   const userResourcePermission: any = {
@@ -96,7 +96,7 @@ describe('User', () => {
     await Auth.updateAppPermissions(null, app);
     await new UserModel({...simpleUserDetails, role: publicRole}).save();
   });
-  describe('/GET list of user', () => {
+  describe('/GET users', () => {
     let tokenAdmin = '';
     let tokenSimple = '';
     before(async () => {
@@ -126,7 +126,7 @@ describe('User', () => {
 
     });
   });
-  describe('/GET user by id', () => {
+  describe('/GET users/:id', () => {
     let tokenAdmin = '';
     let user: any;
     before(async () => {
@@ -158,7 +158,7 @@ describe('User', () => {
       res.body.should.have.property('message').eqls('Server Error');
     });
   });
-  describe('/POST user', () => {
+  describe('/POST users', () => {
     let tokenAdmin = '';
     before(async () => {
       const res1 = await chai.request(app)
@@ -170,7 +170,7 @@ describe('User', () => {
       const res = await chai.request(app)
         .post(`/api/users`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
-        .send(deskUserDetails);
+        .send({...deskUserDetails, role: publicRole});
       res.should.have.status(201);
       res.body.should.have.property('email').eqls(deskUserDetails.email);
     });
@@ -182,7 +182,7 @@ describe('User', () => {
       res.should.have.status(500);
     });
   });
-  describe('/PUT user', () => {
+  describe('/PUT user/:id', () => {
     let tokenAdmin = '';
     let user: any;
     before(async () => {
@@ -207,8 +207,16 @@ describe('User', () => {
         .send(modifiedSimpleUserDetails);
       res.should.have.status(404);
     });
+    it('it should return 500 when id not a mongoose uid', async () => {
+      const res = await chai.request(app)
+        .put(`/api/users/1234`)
+        .set('Authorization', 'Bearer ' + tokenAdmin)
+        .send(modifiedSimpleUserDetails);
+      res.should.have.status(500);
+      res.body.should.have.property('message').eqls('Server Error');
+    });
   });
-  describe('/DELETE user', () => {
+  describe('/DELETE users/:id', () => {
     let tokenAdmin = '';
     let user: any;
     before(async () => {
@@ -223,6 +231,12 @@ describe('User', () => {
         .delete(`/api/users/${user._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(204);
+    });
+    it('it should not delete user with false id', async () => {
+      const res = await chai.request(app)
+        .delete(`/api/users/${falseUID}`)
+        .set('Authorization', 'Bearer ' + tokenAdmin);
+      res.should.have.status(404);
     });
   });
 });

@@ -23,4 +23,10 @@ describe('Base Routes', () => {
       res.should.have.status(404);
     });
   });
+  describe('/GET Syntax Error', () => {
+    it('it should return bad request', async () => {
+      const res = await chai.request(app).get('/%');
+      res.should.have.status(400);
+    });
+  });
 });

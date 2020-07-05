@@ -9,17 +9,10 @@ import {
   HTTP_UNPROCESSABLE_ENTITY
 } from '../helpers/http.responses';
 import { UploadService } from '../services/upload.service';
+import { UploadedFile } from 'express-fileupload';
 
 /** UploadController.ts */
 export class UploadController {
-  private uploadService: UploadService;
-
-  constructor() {
-    this.create = this.create.bind(this);
-    this.update = this.update.bind(this);
-    this.delete = this.delete.bind(this);
-    this.uploadService = new UploadService();
-  }
 
   /** UploadController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
@@ -56,8 +49,8 @@ export class UploadController {
     //   return HTTP_UNSUPPORTED_MEDIA_TYPE(res);
     // }
     try {
-      // @ts-ignore
-      const uploadedFile = await this.uploadService.uploadFile(req.files.file, req.body.alternativeText, req.body.caption);
+      const {uploadService}: { uploadService: UploadService } = req.app.get('services');
+      const uploadedFile = await uploadService.uploadFile(req.files.file as UploadedFile, req.body.alternativeText, req.body.caption);
       const uploadFileEntry = new MediaObjectModel(uploadedFile);
       const uploadFileCreated = await uploadFileEntry.save();
       return HTTP_CREATED(res, uploadFileCreated);
@@ -69,12 +62,12 @@ export class UploadController {
   /** UploadController.update() */
   public async update(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
-    const uploadUpdateData = {
+    const uploadEntryModified = {
       ...(req.body.alternativeText) && {alternativeText: req.body.alternativeText},
       ...(req.body.caption) && {caption: req.body.caption}
     };
     try {
-      const uploadUpdated = await MediaObjectModel.findByIdAndUpdate(id, uploadUpdateData, {new: true});
+      const uploadUpdated = await MediaObjectModel.findByIdAndUpdate(id, uploadEntryModified, {new: true});
       if (!uploadUpdated) {
         return HTTP_NOT_FOUND(res);
       }
@@ -88,8 +81,12 @@ export class UploadController {
   public async delete(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      // TODO DELETE FILE FROM PROVIDER
-      await MediaObjectModel.findByIdAndDelete(id);
+      const {uploadService}: { uploadService: UploadService } = req.app.get('services');
+      const uploadDeleted = await MediaObjectModel.findByIdAndDelete(id);
+      if (!uploadDeleted) {
+        return HTTP_NOT_FOUND(res);
+      }
+      await uploadService.deleteFile(uploadDeleted.toObject());
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

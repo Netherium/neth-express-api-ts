@@ -28,8 +28,7 @@ export class Auth {
       let rolesPerResourceMethod: any;
       try {
         const currentResource = req.baseUrl.replace(new RegExp('\/(.*)\/'), '');
-        const currentMethod = req.route.stack[1].name;
-        const temp = req.app.locals.resourcePermissions;
+        const currentMethod = req.route.stack.find((stackItem: any) => stackItem.name !== '<anonymous>').name;
         rolesPerResourceMethod = req.app.locals.resourcePermissions
           .find((resourcePermission: any) => resourcePermission.resourceName === currentResource).methods
           .find((methodName: any) => methodName.name === currentMethod).roles;
