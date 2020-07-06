@@ -1,22 +1,28 @@
-# Neth-express-api-ts
-A REST API written in Typescript using [Express](https://github.com/expressjs/express) that tries to adhere to best practices
-
-Provides JWT Bearer Token authentication with basic Access-Control Lists (ACL), MongoDB and (soon™) Elasticsearch integration
-
-Testing/coverage with [Mocha](https://www.npmjs.com/package/mocha),[chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
-  
-Made with ❤ by [Netherium](https://github.com/Netherium)
+<h1 align="center">
+  Neth-express-api-ts
+</h1>
+<h4 align="center">A RESTful API written in Typescript using <a href="https://github.com/expressjs/express" target="_blank">Express</a></h4>
+<h5 align="center">JWT auth, Access-Control Lists (ACL), Uploads, MongoDB in one :package: </h5>
+<div align="center">
+    <img src="#lines#" alt="Lines Covered">
+    <img src="#buildstatus#" alt="Build Status">
+    <img src="https://img.shields.io/badge/Node-%3E=12.0.0-grey?logo=node.js&color=339933" alt="Node Version Required">
+    <img src="https://img.shields.io/badge/Built%20with-Typescript-blue" alt="Built with Typescript">
+</div>
+<div align="center">
+  <sub>Made with ❤ by <a href="https://github.com/Netherium">Netherium</a></sub>
+</div>
 
 
 ## Table of contents
 
 - [Quick Start](#quick-start)
 - [Features](#features)
-- [Status](#status)
 - [Basic Routes](#basic-routes)
 - [Resource Permissions](#resource-permissions)
 - [Coding Tips](#coding-tips)
 - [Structure](#structure)
+- [Uploads](#uploads)
 - [Tests](#tests)
 - [Debug](#debug)
 - [Authors](#authors)
@@ -68,16 +74,11 @@ Made with ❤ by [Netherium](https://github.com/Netherium)
 - MongoDB integration
 - Elasticsearch integration (soon™)
 - Protected routes, ACL based with middleware, using [`jwt-token`](https://jwt.io/)
+- File Upload routes and thumbnail generator
 - Test and Coverage
 - REST API Documentation via [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
 - Various helper files and tools, i.e. CORS integration, swagger.yaml, .env environment setup
 - Several scripts for easy development and testing
-
-
-## Status
-
-![Lines](#lines# "Lines Coverage")
-![BuildStatus](#buildstatus# "Building Status")
 
 
 ## Basic Routes
@@ -168,31 +169,42 @@ Get Resource Permissions
 
 ## Structure
 
-Follow the structure below. It will keep things and your mind tidy.
+Follow the structure below. It will keep things and your mind tidy :blossom:
 
     .
-    ├── :file_folder: dist              # Compiled files ready to deploy :rocket:
-    ├── :file_folder: uploads           # When using local provider this is where uploads go
+    ├── dist                # Compiled files ready to deploy `npm run test`
+    ├── uploads             # When using local provider this is where uploads go
     │
-    ├── :file_folder: src               # Source files
-    │   ├── :file_folder: routes        # Routes that define endpoints, methods, handlers and middleware
-    │   ├── :file_folder: controllers   # Controllers that handle functionality from routes
-    │   ├── :file_folder: models        # Mongoose models and typescript interfaces
-    │   ├── :file_folder: middleware    # Middleware functions
-    │   ├── :file_folder: services      # Services in OOP style that can be called in controllers 
-    │   ├── :file_folder: helpers       # Exported functions that need no instantiation  
-    │   └── server.ts                   # Entrypoint
+    ├── src                 # Your code goes here
+    │   ├── routes          # Routes that define endpoints, methods, handlers and middleware
+    │   ├── controllers     # Controllers that handle functionality from routes
+    │   ├── models          # Mongoose models and typescript interfaces
+    │   ├── middleware      # Middleware functions
+    │   ├── services        # Services in OOP style that can be called in controllers 
+    │   ├── helpers         # Exported functions that need no instantiation  
+    │   └── server.ts       # Server entrypoint file
     │                       
-    ├── :file_folder: test              # Automated tests `npm run test`
+    ├── test                # Automated tests `npm run test`
     │
-    ├── swagger.yaml                    # Swagger documentation (`api/docs`) defined in yaml
-    ├── LICENSE                         # License file
-    └── README.md                       # This File
+    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml
+    ├── LICENSE             # License file
+    └── README.md           # This File
+
+
+## Uploads
+
+- Uploads can be stored locally or remotely, see `.env`
+- To upload a file `POST api/uploads` with `Content-Type: multipart/form-data;` or use [Postman](https://www.postman.com/)
+- Field `file` is the file data, `altenativeText`, `caption` are optional strings
+- `PUT api/uploads/:id` accepts `Content-Type: application/json;` as only `altenativeText`, `caption` can be modified
+- If file of image type, a thumbnail (80x80) will be generated
 
 ## Tests
 
-Run tests
 
+Testing/coverage is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
+
+Run tests
 ```bash
 $ npm test
 ```

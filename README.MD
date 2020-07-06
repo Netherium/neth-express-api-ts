@@ -1,18 +1,23 @@
-# Neth-express-api-ts
-A REST API written in Typescript using [Express](https://github.com/expressjs/express) that tries to adhere to best practices
-
-Provides JWT Bearer Token authentication with basic Access-Control Lists (ACL), MongoDB and (soon™) Elasticsearch integration
-
-Testing/coverage with [Mocha](https://www.npmjs.com/package/mocha),[chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
-
-Made with ❤ by [Netherium](https://github.com/Netherium)
+<h1 align="center">
+  Neth-express-api-ts
+</h1>
+<h4 align="center">A RESTful API written in Typescript using <a href="https://github.com/expressjs/express" target="_blank">Express</a></h4>
+<h5 align="center">JWT auth, Access-Control Lists (ACL), MongoDB in one :package: </h5>
+<div align="center">
+    <img src="https://img.shields.io/badge/Coverage-93.44%25-brightgreen.svg" alt="Lines Covered">
+    <img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg" alt="Build Status">
+    <img src="https://img.shields.io/badge/Node-%3E=12.0.0-grey?logo=node.js&color=339933" alt="Node Version Required">
+    <img src="https://img.shields.io/badge/Built%20with-Typescript-blue" alt="Built with Typescript">
+</div>
+<div align="center">
+  <sub>Made with ❤ by <a href="https://github.com/Netherium">Netherium</a></sub>
+</div>
 
 
 ## Table of contents
 
 - [Quick Start](#quick-start)
 - [Features](#features)
-- [Status](#status)
 - [Basic Routes](#basic-routes)
 - [Resource Permissions](#resource-permissions)
 - [Coding Tips](#coding-tips)
@@ -62,7 +67,7 @@ Made with ❤ by [Netherium](https://github.com/Netherium)
     ```
 
 ## Features
-
+  
 - Typescript Intellisense Awesomeness
 - Robust routing and middleware based on same principles of Express
 - MongoDB integration
@@ -74,17 +79,11 @@ Made with ❤ by [Netherium](https://github.com/Netherium)
 - Several scripts for easy development and testing
 
 
-## Status
-
-![Lines](https://img.shields.io/badge/Coverage-93.44%25-brightgreen.svg "Lines Coverage")
-![BuildStatus](https://img.shields.io/badge/Build-Passing-brightgreen.svg "Building Status")
-
-
 ## Basic Routes
 
 The basic routes provided are listed below.
 Each one of them is being reflected by its own `route`, `controller`, `model`
-
+ 
 #### Auth
 - :unlock: `api/auth/register` [POST]
 - :unlock: `api/auth/login` [POST]
@@ -147,7 +146,7 @@ POST api/resource-permissions
         }
     ]
 }
-```
+``` 
 
 ## Coding Tips
 
@@ -168,31 +167,33 @@ Get Resource Permissions
 
 ## Structure
 
-Follow the structure below. It will keep things and your mind tidy.
+Follow the structure below. It will keep things and your mind tidy :blossom:
 
     .
-    ├── :file_folder: dist              # Compiled files ready to deploy :rocket:
-    ├── :file_folder: uploads           # When using local provider this is where uploads go
+    ├── dist                # Compiled files ready to deploy `npm run test`
+    ├── uploads             # When using local provider this is where uploads go
     │
-    ├── :file_folder: src               # Source files
-    │   ├── :file_folder: routes        # Routes that define endpoints, methods, handlers and middleware
-    │   ├── :file_folder: controllers   # Controllers that handle functionality from routes
-    │   ├── :file_folder: models        # Mongoose models and typescript interfaces
-    │   ├── :file_folder: middleware    # Middleware functions
-    │   ├── :file_folder: services      # Services in OOP style that can be called in controllers
-    │   ├── :file_folder: helpers       # Exported functions that need no instantiation
-    │   └── server.ts                   # Entrypoint
+    ├── src                 # Your code goes here
+    │   ├── routes          # Routes that define endpoints, methods, handlers and middleware
+    │   ├── controllers     # Controllers that handle functionality from routes
+    │   ├── models          # Mongoose models and typescript interfaces
+    │   ├── middleware      # Middleware functions
+    │   ├── services        # Services in OOP style that can be called in controllers 
+    │   ├── helpers         # Exported functions that need no instantiation  
+    │   └── server.ts       # Server entrypoint file
+    │                       
+    ├── test                # Automated tests `npm run test`
     │
-    ├── :file_folder: test              # Automated tests `npm run test`
-    │
-    ├── swagger.yaml                    # Swagger documentation (`api/docs`) defined in yaml
-    ├── LICENSE                         # License file
-    └── README.md                       # This File
+    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml
+    ├── LICENSE             # License file
+    └── README.md           # This File
 
 ## Tests
 
-Run tests
 
+Testing/coverage is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
+
+Run tests
 ```bash
 $ npm test
 ```
@@ -208,8 +209,8 @@ $ npm run test:coverage
 
 
 ## Debug
-
-To debug TS without compiling it, you can setup your IDE of choice as in the example below
+  
+To debug TS without compiling it, you can setup your IDE of choice as in the example below  
 Note: Running older versions of node  may require attaching `--inspect` before `--require`
 
 <img src="https://raw.githubusercontent.com/Netherium/neth-express-api-ts/master/img/debug_setup.png">
