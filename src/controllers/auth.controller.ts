@@ -7,7 +7,6 @@ import {
   HTTP_OK,
   HTTP_UNAUTHORIZED
 } from '../helpers/http.responses';
-import * as jwt from 'jsonwebtoken';
 import RoleModel from '../models/role.model';
 import UserModel from '../models/user.model';
 import ResourcePermissionModel from '../models/resource-permission.model';

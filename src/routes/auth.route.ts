@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { ResourcePermissionController } from '../controllers/resource-permission.controller';
 import { Auth } from '../middleware/auth';
 import { AuthController } from '../controllers/auth.controller';
 

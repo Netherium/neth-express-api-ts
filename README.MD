@@ -2,9 +2,9 @@
   Neth-express-api-ts
 </h1>
 <h4 align="center">A RESTful API written in Typescript using <a href="https://github.com/expressjs/express" target="_blank">Express</a></h4>
-<h5 align="center">JWT auth, Access-Control Lists (ACL), MongoDB in one :package: </h5>
+<h5 align="center">JWT auth, Access-Control Lists (ACL), Uploads, MongoDB in one :package: </h5>
 <div align="center">
-    <img src="https://img.shields.io/badge/Coverage-93.44%25-brightgreen.svg" alt="Lines Covered">
+    <img src="https://img.shields.io/badge/Coverage-92.79%25-brightgreen.svg" alt="Lines Covered">
     <img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg" alt="Build Status">
     <img src="https://img.shields.io/badge/Node-%3E=12.0.0-grey?logo=node.js&color=339933" alt="Node Version Required">
     <img src="https://img.shields.io/badge/Built%20with-Typescript-blue" alt="Built with Typescript">
@@ -22,6 +22,7 @@
 - [Resource Permissions](#resource-permissions)
 - [Coding Tips](#coding-tips)
 - [Structure](#structure)
+- [Uploads](#uploads)
 - [Tests](#tests)
 - [Debug](#debug)
 - [Authors](#authors)
@@ -73,6 +74,7 @@
 - MongoDB integration
 - Elasticsearch integration (soon™)
 - Protected routes, ACL based with middleware, using [`jwt-token`](https://jwt.io/)
+- File Upload routes and thumbnail generator
 - Test and Coverage
 - REST API Documentation via [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
 - Various helper files and tools, i.e. CORS integration, swagger.yaml, .env environment setup
@@ -129,7 +131,8 @@ I.e. file `article.route.ts`
 ```
 
 - Add the appropriate resource-permission for this resource for each method (`list`, `create`, in this case) and for each method the roles that will have access to.
-:warning: **If you add at least 1 unauthenticated role then this resource route will be open **
+
+    :warning: **If you add at least 1 unauthenticated role then this resource route will be open**
 
 ```bash
 POST api/resource-permissions
@@ -184,12 +187,21 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
     │                       
     ├── test                # Automated tests `npm run test`
     │
-    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml
+    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml format
     ├── LICENSE             # License file
     └── README.md           # This File
 
-## Tests
 
+## Uploads
+
+- Uploads can be stored locally or remotely, see `.env`
+- To upload a file `POST api/uploads` with `Content-Type: multipart/form-data;` or use [Postman](https://www.postman.com/)
+- Field `file` is the file data, `altenativeText`, `caption` are optional strings
+- `PUT api/uploads/:id` accepts `Content-Type: application/json;` as only `altenativeText`, `caption` can be modified
+- If file of image type, a thumbnail (80x80) will be generated
+
+
+## Tests
 
 Testing/coverage is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
 

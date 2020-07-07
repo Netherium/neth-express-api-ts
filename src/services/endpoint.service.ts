@@ -20,14 +20,6 @@ export class EndpointService {
     return routeStack.find((stackItem: any) => stackItem.name !== '<anonymous>');
   }
 
-  private getEndpointPath(stackItem: any) {
-    let routerEndpointPath = stackItem.regexp.toString().replace(this.expressPathRegex, '$1').replace(/\\\//g, '/');
-    if (routerEndpointPath === '') {
-      routerEndpointPath = '/';
-    }
-    return routerEndpointPath;
-  }
-
   public listApiEndpoints() {
     const stack = this.app.stack || (this.app._router && this.app._router.stack);
     const endPoints: Endpoint[] = [];
@@ -48,5 +40,13 @@ export class EndpointService {
       }
     });
     return endPoints;
+  }
+
+  private getEndpointPath(stackItem: any) {
+    let routerEndpointPath = stackItem.regexp.toString().replace(this.expressPathRegex, '$1').replace(/\\\//g, '/');
+    if (routerEndpointPath === '') {
+      routerEndpointPath = '/';
+    }
+    return routerEndpointPath;
   }
 }

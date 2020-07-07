@@ -131,7 +131,8 @@ I.e. file `article.route.ts`
 ```
 
 - Add the appropriate resource-permission for this resource for each method (`list`, `create`, in this case) and for each method the roles that will have access to.
-:warning: **If you add at least 1 unauthenticated role then this resource route will be open **
+
+    :warning: **If you add at least 1 unauthenticated role then this resource route will be open**
 
 ```bash
 POST api/resource-permissions
@@ -186,7 +187,7 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
     │                       
     ├── test                # Automated tests `npm run test`
     │
-    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml
+    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml format
     ├── LICENSE             # License file
     └── README.md           # This File
 
@@ -199,8 +200,8 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
 - `PUT api/uploads/:id` accepts `Content-Type: application/json;` as only `altenativeText`, `caption` can be modified
 - If file of image type, a thumbnail (80x80) will be generated
 
-## Tests
 
+## Tests
 
 Testing/coverage is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
 

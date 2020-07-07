@@ -23,7 +23,6 @@ import { EndpointService } from './services/endpoint.service';
 import { EndpointRoute } from './routes/endpoint.route';
 import { UploadService } from './services/upload.service';
 import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from './helpers/http.responses';
-import { NextFunction } from 'express';
 
 class App {
   public express: express.Application;
@@ -94,7 +93,7 @@ class App {
    */
   private routes() {
     this.express.use('/', new RootRoute().router);
-    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml')));
+    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml'), {}));
     if (process.env.UPLOAD_PROVIDER === 'local') {
       this.express.use('/uploads', express.static(process.env.UPLOAD_PROVIDER_FOLDER));
     }
