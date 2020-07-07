@@ -54,7 +54,7 @@
 
 4. :dash: Develop
      ```bash
-    $ npm run start
+    $ npm run dev
     ```
 
 5. :bulb: Initialize: Navigate to http://localhost:4000/api/auth/init
@@ -132,8 +132,6 @@ I.e. file `article.route.ts`
 
 - Add the appropriate resource-permission for this resource for each method (`list`, `create`, in this case) and for each method the roles that will have access to.
 
-    :warning: **If you add at least 1 unauthenticated role then this resource route will be open**
-
 ```bash
 POST api/resource-permissions
 {
@@ -150,6 +148,8 @@ POST api/resource-permissions
     ]
 }
 ``` 
+:warning: **If you add at least 1 unauthenticated role then this resource route will be open**
+
 
 ## Coding Tips
 
@@ -203,7 +203,7 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
 
 ## Tests
 
-Testing/coverage is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [nyc](https://www.npmjs.com/package/nyc)
+Testing is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [chai-http](https://www.npmjs.com/package/chai-http)
 
 Run tests
 ```bash
@@ -212,6 +212,8 @@ $ npm test
 
 
 ## Coverage
+
+Coverage is based on [nyc](https://www.npmjs.com/package/nyc)
 
 Run coverage (generated under folder `coverage`)
 
