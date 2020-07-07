@@ -132,8 +132,6 @@ I.e. file `article.route.ts`
 
 - Add the appropriate resource-permission for this resource for each method (`list`, `create`, in this case) and for each method the roles that will have access to.
 
-    :warning: **If you add at least 1 unauthenticated role then this resource route will be open**
-
 ```bash
 POST api/resource-permissions
 {
@@ -150,6 +148,8 @@ POST api/resource-permissions
     ]
 }
 ``` 
+:warning: **If you add at least 1 unauthenticated role then this resource route will be open**
+
 
 ## Coding Tips
 
