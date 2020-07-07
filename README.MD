@@ -90,7 +90,7 @@ Each one of them is being reflected by its own `route`, `controller`, `model`
 - :unlock: `api/auth/register` [POST]
 - :unlock: `api/auth/login` [POST]
 - :closed_lock_with_key: `api/auth/profile` [GET, PUT, DELETE]
-- :unlock:`api/auth/init` [GET]
+- :unlock: `api/auth/init` [GET]
 
 #### Roles
 - :closed_lock_with_key: `api/roles` [GET, GET `/:id`, POST, PUT `/:id`, DELETE `/:id`]
