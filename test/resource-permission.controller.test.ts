@@ -142,7 +142,7 @@ describe('Resource Permissions', () => {
     tokenAdmin = JSON.parse(res.text).token;
   });
   describe('/GET resource-permissions', () => {
-    it('it should return list of resource-permissions', async () => {
+    it('it should return collection of resource-permissions', async () => {
       const res = await chai.request(app)
         .get('/api/resource-permissions')
         .set('Authorization', 'Bearer ' + tokenAdmin);
@@ -174,7 +174,7 @@ describe('Resource Permissions', () => {
     });
   });
   describe('/POST resource-permissions', () => {
-    it('it should insert new resource-permission', async () => {
+    it('it should create resource-permission', async () => {
       const res = await chai.request(app)
         .post(`/api/resource-permissions`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -182,7 +182,7 @@ describe('Resource Permissions', () => {
       res.should.have.status(201);
       res.body.should.have.property('resourceName').eqls(newResourcePermissionDetails.resourceName);
     });
-    it('it should not insert new resource-permission with wrong body', async () => {
+    it('it should not create resource-permission with wrong body', async () => {
       const res = await chai.request(app)
         .post(`/api/resource-permissions`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -191,7 +191,7 @@ describe('Resource Permissions', () => {
     });
   });
   describe('/PUT resource-permissions/:id', () => {
-    it('it should modify resource-permission', async () => {
+    it('it should update resource-permission', async () => {
       const res = await chai.request(app)
         .put(`/api/resource-permissions/${resourcePermission1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -199,7 +199,7 @@ describe('Resource Permissions', () => {
       res.should.have.status(200);
       res.body.should.have.property('resourceName').eqls(modifiedResourcePermissionDetails.resourceName);
     });
-    it('it should not modify resource-permission with false id', async () => {
+    it('it should not update resource-permission with false id', async () => {
       const res = await chai.request(app)
         .put(`/api/resource-permissions/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)

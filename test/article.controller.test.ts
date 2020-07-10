@@ -108,7 +108,7 @@ describe('Articles', () => {
     tokenAdmin = JSON.parse(res.text).token;
   });
   describe('/GET articles', () => {
-    it('it should return list of articles', async () => {
+    it('it should return collection of articles', async () => {
       const res = await chai.request(app)
         .get('/api/articles');
       res.should.have.status(200);
@@ -137,7 +137,7 @@ describe('Articles', () => {
     });
   });
   describe('/POST articles', () => {
-    it('it should insert new article', async () => {
+    it('it should create article', async () => {
       const res = await chai.request(app)
         .post(`/api/articles`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -146,7 +146,7 @@ describe('Articles', () => {
       res.body.should.have.property('title').eqls(newArticleDetails.title);
       res.body.should.have.property('author').have.property('email').eqls(adminUserDetails.email);
     });
-    it('it should not insert new article with wrong body', async () => {
+    it('it should not create article with wrong body', async () => {
       const res = await chai.request(app)
         .post(`/api/articles`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -155,7 +155,7 @@ describe('Articles', () => {
     });
   });
   describe('/PUT articles/:id', () => {
-    it('it should modify article', async () => {
+    it('it should update article', async () => {
       const res = await chai.request(app)
         .put(`/api/articles/${article1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -163,7 +163,7 @@ describe('Articles', () => {
       res.should.have.status(200);
       res.body.should.have.property('title').eqls(modifiedArticleDetails.title);
     });
-    it('it should not modify article with false id', async () => {
+    it('it should not update article with false id', async () => {
       const res = await chai.request(app)
         .put(`/api/articles/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)

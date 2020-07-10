@@ -115,7 +115,7 @@ describe('Uploads Provider: local', () => {
       .attach('file', upload1Details.filePath)).body;
   });
   describe('/GET uploads', () => {
-    it('it should return list of uploads', async () => {
+    it('it should return collection of uploads', async () => {
       const res = await chai.request(app)
         .get('/api/uploads')
         .set('Authorization', 'Bearer ' + tokenAdmin);
@@ -146,7 +146,7 @@ describe('Uploads Provider: local', () => {
     });
   });
   describe('/POST uploads', () => {
-    it('it should insert new upload', async () => {
+    it('it should create upload', async () => {
       const res = await chai.request(app)
         .post(`/api/uploads`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -166,7 +166,7 @@ describe('Uploads Provider: local', () => {
     });
   });
   describe('/PUT uploads/:id', () => {
-    it('it should modify upload', async () => {
+    it('it should update upload', async () => {
       const res = await chai.request(app)
         .put(`/api/uploads/${upload1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -175,7 +175,7 @@ describe('Uploads Provider: local', () => {
       res.body.should.have.property('alternativeText').eqls(modifiedUploadDetails.alternativeText);
       res.body.should.have.property('caption').eqls(modifiedUploadDetails.caption);
     });
-    it('it should not modify upload with false id', async () => {
+    it('it should not update upload with false id', async () => {
       const res = await chai.request(app)
         .put(`/api/uploads/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -269,8 +269,8 @@ describe('Uploads Provider: do', () => {
       .field('caption', upload1Details.caption)
       .attach('file', upload1Details.filePath)).body;
   });
-  describe(`/POST uploads with provider: ${process.env.UPLOAD_PROVIDER}`, () => {
-    it('it should insert new upload', async () => {
+  describe(`/POST uploads with remote provider`, () => {
+    it('it should create upload', async () => {
       const res = await chai.request(app)
         .post(`/api/uploads`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -282,7 +282,7 @@ describe('Uploads Provider: do', () => {
       res.body.should.have.property('caption').eqls(newDetails.caption);
     });
   });
-  describe(`/DELETE uploads/:id with provider: ${process.env.UPLOAD_PROVIDER}`, () => {
+  describe(`/DELETE uploads/:id with remote provider`, () => {
     it('it should delete upload', async () => {
       const res = await chai.request(app)
         .delete(`/api/uploads/${upload1._id}`)

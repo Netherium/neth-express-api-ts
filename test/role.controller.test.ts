@@ -110,7 +110,7 @@ describe('Roles', () => {
     tokenAdmin = JSON.parse(res.text).token;
   });
   describe('/GET roles', () => {
-    it('it should return list of roles', async () => {
+    it('it should return collection of roles', async () => {
       const res = await chai.request(app)
         .get('/api/roles')
         .set('Authorization', 'Bearer ' + tokenAdmin);
@@ -143,7 +143,7 @@ describe('Roles', () => {
     });
   });
   describe('/POST roles', () => {
-    it('it should insert new role', async () => {
+    it('it should create role', async () => {
       const res = await chai.request(app)
         .post(`/api/roles`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -151,7 +151,7 @@ describe('Roles', () => {
       res.should.have.status(201);
       res.body.should.have.property('name').eqls(newRoleDetails.name);
     });
-    it('it should not insert new role with wrong body', async () => {
+    it('it should not create role with wrong body', async () => {
       const res = await chai.request(app)
         .post(`/api/roles`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -160,7 +160,7 @@ describe('Roles', () => {
     });
   });
   describe('/PUT roles/:id', () => {
-    it('it should modify role', async () => {
+    it('it should update role', async () => {
       const res = await chai.request(app)
         .put(`/api/roles/${role1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -168,7 +168,7 @@ describe('Roles', () => {
       res.should.have.status(200);
       res.body.should.have.property('name').eqls(modifiedRoleDetails.name);
     });
-    it('it should not modify role with false id', async () => {
+    it('it should not update role with false id', async () => {
       const res = await chai.request(app)
         .put(`/api/roles/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)

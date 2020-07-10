@@ -1,20 +1,19 @@
 openapi: 3.0.1
 info:
   title: Neth-Express-Api-TS
-  description: >-
-    <h3 align="center">A REST Api written in Typescript using Express</h3>
-    <p align="center">Provides JWT Bearer Token authentication with  access control lists<br>
-    Protected routes will need a `jwt-token`<br>
+  description: <h3 align="center">A REST Api written in Typescript using
+    Express</h3> <p align="center">Provides JWT Bearer Token authentication
+    with  access control lists<br> Protected routes will need a `jwt-token`<br>
     Full repo on [github](https://github.com/Netherium/neth-express-api-ts)<br>
     Made with ❤ by [Netherium](https://github.com/Netherium)</p>
   contact:
     email: gerpis@gmail.com
   license:
     name: MIT license
-    url: 'https://opensource.org/licenses/MIT'
+    url: https://opensource.org/licenses/MIT
   version: 1.0.0
 servers:
-  - url: 'http://localhost:4000/api'
+  - url: http://localhost:4000/api
 tags:
   - name: Auth
     description: Operations for authorizing
@@ -22,7 +21,7 @@ tags:
   - name: Roles
   - name: ResourcePermissions
   - name: Uploads
-
+  - name: Articles
 paths:
   /auth/login:
     post:
@@ -32,18 +31,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthUser'
+              $ref: "#/components/schemas/AuthUser"
         required: true
       responses:
-        201:
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
-        401:
-          $ref: '#/components/responses/HTTP_UNAUTHORIZED'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/Token"
+        "401":
+          $ref: "#/components/responses/HTTP_UNAUTHORIZED"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
   /auth/register:
     post:
       tags:
@@ -52,28 +51,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthUser'
+              $ref: "#/components/schemas/AuthUser"
         required: true
       responses:
-        201:
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/User"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
   /auth/profile:
     get:
       tags:
         - Auth
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/User"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     put:
@@ -83,28 +82,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthUser'
+              $ref: "#/components/schemas/AuthUser"
         required: true
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/User"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     delete:
       tags:
         - Auth
       responses:
-        204:
-          $ref: '#/components/responses/HTTP_NO_CONTENT'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+        "204":
+          $ref: "#/components/responses/HTTP_NO_CONTENT"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
   /auth/init:
@@ -112,29 +111,29 @@ paths:
       tags:
         - Auth
       responses:
-        201:
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/Token"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
   /users:
     get:
       tags:
         - Users
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                  $ref: "#/components/schemas/User"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     post:
@@ -144,20 +143,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  /users/{id}:
+  "/users/{id}":
     get:
       tags:
         - Users
@@ -168,15 +167,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     put:
@@ -192,17 +191,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     delete:
@@ -215,12 +214,12 @@ paths:
           schema:
             type: string
       responses:
-        204:
-          $ref: '#/components/responses/HTTP_NO_CONTENT'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+        "204":
+          $ref: "#/components/responses/HTTP_NO_CONTENT"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
   /roles:
@@ -228,15 +227,15 @@ paths:
       tags:
         - Roles
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Role'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                  $ref: "#/components/schemas/Role"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     post:
@@ -246,20 +245,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Role'
+              $ref: "#/components/schemas/Role"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Role'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/Role"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  /roles/{id}:
+  "/roles/{id}":
     get:
       tags:
         - Roles
@@ -270,15 +269,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Role'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/Role"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     put:
@@ -294,17 +293,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Role'
+              $ref: "#/components/schemas/Role"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Role'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/Role"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     delete:
@@ -317,12 +316,12 @@ paths:
           schema:
             type: string
       responses:
-        204:
-          $ref: '#/components/responses/HTTP_NO_CONTENT'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+        "204":
+          $ref: "#/components/responses/HTTP_NO_CONTENT"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
   /resource-permissions:
@@ -330,15 +329,15 @@ paths:
       tags:
         - ResourcePermissions
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResourcePermission'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                  $ref: "#/components/schemas/ResourcePermission"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     post:
@@ -348,20 +347,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourcePermission'
+              $ref: "#/components/schemas/ResourcePermission"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourcePermission'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/ResourcePermission"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  /resource-permissions/{id}:
+  "/resource-permissions/{id}":
     get:
       tags:
         - ResourcePermissions
@@ -372,15 +371,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourcePermission'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/ResourcePermission"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     put:
@@ -396,17 +395,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ResourcePermission'
+              $ref: "#/components/schemas/ResourcePermission"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourcePermission'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/ResourcePermission"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     delete:
@@ -419,12 +418,12 @@ paths:
           schema:
             type: string
       responses:
-        204:
-          $ref: '#/components/responses/HTTP_NO_CONTENT'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+        "204":
+          $ref: "#/components/responses/HTTP_NO_CONTENT"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
   /uploads:
@@ -432,15 +431,15 @@ paths:
       tags:
         - Uploads
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MediaObject'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                  $ref: "#/components/schemas/MediaObject"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     post:
@@ -450,20 +449,20 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FileUpload'
+              $ref: "#/components/schemas/FileUpload"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResourcePermission'
-        422:
-          $ref: '#/components/responses/HTTP_UNPROCESSABLE_ENTITY'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/ResourcePermission"
+        "422":
+          $ref: "#/components/responses/HTTP_UNPROCESSABLE_ENTITY"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  /uploads/{id}:
+  "/uploads/{id}":
     get:
       tags:
         - Uploads
@@ -474,15 +473,15 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MediaObject'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/MediaObject"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     put:
@@ -498,17 +497,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FileUpload'
+              $ref: "#/components/schemas/FileUpload"
       responses:
-        200:
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MediaObject'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+                $ref: "#/components/schemas/MediaObject"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     delete:
@@ -521,12 +520,114 @@ paths:
           schema:
             type: string
       responses:
-        204:
-          $ref: '#/components/responses/HTTP_NO_CONTENT'
-        404:
-          $ref: '#/components/responses/HTTP_NOT_FOUND'
-        500:
-          $ref: '#/components/responses/HTTP_INTERNAL_SERVER_ERROR'
+        "204":
+          $ref: "#/components/responses/HTTP_NO_CONTENT"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
+      security:
+        - Bearer: []
+  /articles:
+    get:
+      tags:
+        - Articles
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Article"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
+      security:
+        - Bearer: []
+    post:
+      tags:
+        - Articles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Article"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
+      security:
+        - Bearer: []
+  "/articles/{id}":
+    get:
+      tags:
+        - Articles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
+      security:
+        - Bearer: []
+    put:
+      tags:
+        - Articles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Article"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
+      security:
+        - Bearer: []
+    delete:
+      tags:
+        - Articles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          $ref: "#/components/responses/HTTP_NO_CONTENT"
+        "404":
+          $ref: "#/components/responses/HTTP_NOT_FOUND"
+        "500":
+          $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
 components:
@@ -536,48 +637,48 @@ components:
         application/json:
           schema:
             oneOf:
-              - $ref: '#/components/schemas/User'
-              - $ref: '#/components/schemas/Role'
+              - $ref: "#/components/schemas/User"
+              - $ref: "#/components/schemas/Role"
     HTTP_NO_CONTENT:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_BAD_REQUEST:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_UNAUTHORIZED:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_FORBIDDEN:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_NOT_FOUND:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_UNSUPPORTED_MEDIA_TYPE:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_UNPROCESSABLE_ENTITY:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     HTTP_INTERNAL_SERVER_ERROR:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
   schemas:
     AuthUser:
       required:
@@ -608,7 +709,7 @@ components:
           type: string
           example: JOHN DOE
         role:
-          $ref: '#/components/schemas/Role'
+          $ref: "#/components/schemas/Role"
         isVerified:
           type: boolean
         password:
@@ -772,7 +873,7 @@ components:
               roles:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Role'
+                  $ref: "#/components/schemas/Role"
         description:
           type: string
         createdAt:
@@ -786,13 +887,34 @@ components:
       required:
         - name
         - isAuthenticated
+    Article:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        title:
+          type: string
+        author:
+          $ref: "#/components/schemas/User"
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - title
   securitySchemes:
     Bearer:
       type: http
       scheme: bearer
       bearerFormat: JWT
       description: >-
-        To access certain routes of API a valid JWT token must be passed in authorized methods in the 'Authorization' header.<br>
+        To access certain routes of API a valid JWT token must be passed in
+        authorized methods in the 'Authorization' header.<br>
 
         Get a valid JWT token from `/auth/login`<br>
 

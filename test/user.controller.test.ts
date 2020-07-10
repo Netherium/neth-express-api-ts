@@ -109,7 +109,7 @@ describe('Users', () => {
         .send(simpleUserDetails);
       tokenSimple = JSON.parse(res2.text).token;
     });
-    it('it should return list of user', async () => {
+    it('it should return collection of user', async () => {
       const res = await chai.request(app)
         .get('/api/users')
         .set('Authorization', 'Bearer ' + tokenAdmin);
@@ -166,7 +166,7 @@ describe('Users', () => {
         .send(adminUserDetails);
       tokenAdmin = JSON.parse(res1.text).token;
     });
-    it('it should insert new deskUser', async () => {
+    it('it should create deskUser', async () => {
       const res = await chai.request(app)
         .post(`/api/users`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -192,7 +192,7 @@ describe('Users', () => {
       tokenAdmin = JSON.parse(res1.text).token;
       user = await UserModel.findOne({email: simpleUserDetails.email});
     });
-    it('it should modify simpleLoginUser', async () => {
+    it('it should update simpleLoginUser', async () => {
       const res = await chai.request(app)
         .put(`/api/users/${user._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
@@ -200,7 +200,7 @@ describe('Users', () => {
       res.should.have.status(200);
       res.body.should.have.property('name').eqls(modifiedSimpleUserDetails.name);
     });
-    it('it should modify not modify a user with false id', async () => {
+    it('it should update not update a user with false id', async () => {
       const res = await chai.request(app)
         .put(`/api/users/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)

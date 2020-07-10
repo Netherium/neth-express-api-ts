@@ -70,7 +70,7 @@ describe('Endpoints', () => {
     tokenAdmin = JSON.parse(res.text).token;
   });
   describe('/GET endpoints', () => {
-    it('it should return list of endpoints', async () => {
+    it('it should return collection of endpoints', async () => {
       const res = await chai.request(app)
         .get('/api/endpoints')
         .set('Authorization', 'Bearer ' + tokenAdmin);
