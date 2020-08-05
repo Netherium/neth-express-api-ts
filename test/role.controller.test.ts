@@ -115,8 +115,8 @@ describe('Roles', () => {
         .get('/api/roles')
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(200);
-      res.body.should.be.an('array');
-      res.body.should.have.lengthOf(4);
+      res.body.should.have.property('totalItems').eql(4);
+      res.body.should.have.property('data').lengthOf(4);
     });
   });
   describe('/GET roles/:id', () => {

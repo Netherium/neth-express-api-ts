@@ -1,24 +1,25 @@
 import { Request, Response } from 'express';
-import MediaObjectModel from '../models/media.object.model';
+import MediaObjectModel from '../models/media-object.model';
 import {
   HTTP_CREATED,
   HTTP_INTERNAL_SERVER_ERROR,
   HTTP_NO_CONTENT,
   HTTP_NOT_FOUND,
   HTTP_OK,
-  HTTP_UNPROCESSABLE_ENTITY
+  HTTP_UNPROCESSABLE_ENTITY, HTTP_UNSUPPORTED_MEDIA_TYPE
 } from '../helpers/http.responses';
-import { UploadService } from '../services/upload.service';
+import { isMimeTypePhoto, UploadService } from '../services/upload.service';
 import { UploadedFile } from 'express-fileupload';
+import { queryBuilderCollection } from '../helpers/query-builder-collection';
 
 /** UploadController.ts */
-export class UploadController {
+export class MediaObjectController {
 
   /** UploadController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
-      const uploadCollection = await MediaObjectModel.find();
-      return HTTP_OK(res, uploadCollection);
+      const mediaObjectCollection = await queryBuilderCollection(req, MediaObjectModel);
+      return HTTP_OK(res, mediaObjectCollection);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
@@ -51,9 +52,9 @@ export class UploadController {
     try {
       const {uploadService}: { uploadService: UploadService } = req.app.get('services');
       const uploadedFile = await uploadService.uploadFile(req.files.file as UploadedFile, req.body.alternativeText, req.body.caption);
-      const uploadFileEntry = new MediaObjectModel(uploadedFile);
-      const uploadFileCreated = await uploadFileEntry.save();
-      return HTTP_CREATED(res, uploadFileCreated);
+      const mediaObjectEntry = new MediaObjectModel(uploadedFile);
+      const mediaObjectCreated = await mediaObjectEntry.save();
+      return HTTP_CREATED(res, mediaObjectCreated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
@@ -62,16 +63,16 @@ export class UploadController {
   /** UploadController.update() */
   public async update(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
-    const uploadEntryModified = {
-      ...(req.body.alternativeText) && {alternativeText: req.body.alternativeText},
-      ...(req.body.caption) && {caption: req.body.caption}
+    const mediaObjectModified = {
+      ...(req.body.alternativeText !== undefined) && {alternativeText: req.body.alternativeText},
+      ...(req.body.caption !== undefined) && {caption: req.body.caption}
     };
     try {
-      const uploadUpdated = await MediaObjectModel.findByIdAndUpdate(id, uploadEntryModified, {new: true});
-      if (!uploadUpdated) {
+      const mediaObjectUpdated = await MediaObjectModel.findByIdAndUpdate(id, mediaObjectModified, {new: true});
+      if (!mediaObjectUpdated) {
         return HTTP_NOT_FOUND(res);
       }
-      return HTTP_OK(res, uploadUpdated);
+      return HTTP_OK(res, mediaObjectUpdated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
@@ -82,11 +83,11 @@ export class UploadController {
     const id = req.params.id;
     try {
       const {uploadService}: { uploadService: UploadService } = req.app.get('services');
-      const uploadDeleted = await MediaObjectModel.findByIdAndDelete(id);
-      if (!uploadDeleted) {
+      const mediaObjectDeleted = await MediaObjectModel.findByIdAndDelete(id);
+      if (!mediaObjectDeleted) {
         return HTTP_NOT_FOUND(res);
       }
-      await uploadService.deleteFile(uploadDeleted.toObject());
+      await uploadService.deleteFile(mediaObjectDeleted.toObject());
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

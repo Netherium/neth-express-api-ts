@@ -147,7 +147,8 @@ describe('Resource Permissions', () => {
         .get('/api/resource-permissions')
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(200);
-      res.body.should.be.an('array');
+      res.body.should.have.property('totalItems').eql(3);
+      res.body.should.have.property('data').lengthOf(3);
     });
   });
   describe('/GET resource-permissions/:id', () => {

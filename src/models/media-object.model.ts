@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
+const fuzzySearching = require('mongoose-fuzzy-searching');
 
+const Schema = mongoose.Schema;
 const mediaObjectSchema = new Schema({
   name: {
     type: String,
@@ -31,5 +32,7 @@ const mediaObjectSchema = new Schema({
   }
 
 }, {timestamps: true});
+
+mediaObjectSchema.plugin(fuzzySearching, {fields: ['name', 'alternativeText', 'caption']});
 
 export default mongoose.model('mediaObject', mediaObjectSchema);

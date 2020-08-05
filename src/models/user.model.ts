@@ -2,8 +2,9 @@ import * as mongoose from 'mongoose';
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
 
-const Schema = mongoose.Schema;
+const fuzzySearching = require('mongoose-fuzzy-searching');
 
+const Schema = mongoose.Schema;
 const userSchema = new Schema({
   email: {
     type: String,
@@ -17,7 +18,7 @@ const userSchema = new Schema({
   role: {
     type: Schema.Types.ObjectId,
     ref: 'role',
-    required: true
+    required: true,
   },
   isVerified: {
     type: Boolean,
@@ -78,5 +79,7 @@ userSchema.methods.generateJWT = async function () {
     exp: ~~(expiry.getTime() / 1000)
   }, process.env.secret);
 };
+
+userSchema.plugin(fuzzySearching, {fields: ['email', 'name']});
 
 export default mongoose.model('user', userSchema);

@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
 
+const fuzzySearching = require('mongoose-fuzzy-searching');
+
 const Schema = mongoose.Schema;
 const resourcePermissionSchema = new Schema({
   resourceName: {
@@ -21,4 +23,7 @@ const resourcePermissionSchema = new Schema({
     }
   ]
 }, {timestamps: true});
+
+resourcePermissionSchema.plugin(fuzzySearching, {fields: ['resourceName']});
+
 export default mongoose.model('resourcePermission', resourcePermissionSchema);

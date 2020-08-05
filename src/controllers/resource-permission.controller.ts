@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import ResourcePermissionModel from '../models/resource-permission.model';
 import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK } from '../helpers/http.responses';
 import { Auth } from '../middleware/auth';
+import { queryBuilderCollection } from '../helpers/query-builder-collection';
 
 /** ResourcePermissionController.ts */
 export class ResourcePermissionController {
@@ -9,14 +10,12 @@ export class ResourcePermissionController {
   /** ResourcePermissionController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
-      const resourcePermissionCollection = await ResourcePermissionModel.find()
-        .populate({
-          path: 'methods',
-          populate: {
-            path: 'roles'
-          }
-        }).exec();
-      await Auth.updateAppPermissions(req);
+      const resourcePermissionCollection = await queryBuilderCollection(req, ResourcePermissionModel, [{
+        path: 'methods',
+        populate: {
+          path: 'roles'
+        }
+      }]);
       return HTTP_OK(res, resourcePermissionCollection);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
@@ -68,8 +67,8 @@ export class ResourcePermissionController {
   public async update(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     const resourcePermissionUpdateData = {
-      ...(req.body.resourceName) && {resourceName: req.body.resourceName},
-      ...(req.body.methods) && {methods: req.body.methods}
+      ...(req.body.resourceName !== undefined) && {resourceName: req.body.resourceName},
+      ...(req.body.methods !== undefined) && {methods: req.body.methods}
     };
     try {
       const resourcePermissionUpdated = await ResourcePermissionModel.findByIdAndUpdate(id, resourcePermissionUpdateData, {new: true});

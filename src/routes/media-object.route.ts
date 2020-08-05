@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { UploadController } from '../controllers/upload.controller';
+import { MediaObjectController } from '../controllers/media-object.controller';
 import { Auth } from '../middleware/auth';
 import * as fileUpload from 'express-fileupload';
 
-export class UploadRoute {
+export class MediaObjectRoute {
   public router = Router();
 
   constructor() {
-    const controller = new UploadController();
+    const controller = new MediaObjectController();
     this.router.get('/', Auth.getAcl(), controller.list);
     this.router.get('/:id', Auth.getAcl(), controller.show);
     this.router.post('/', [Auth.getAcl(), fileUpload()], controller.create);

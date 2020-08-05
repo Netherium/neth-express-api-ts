@@ -114,8 +114,8 @@ describe('Users', () => {
         .get('/api/users')
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(200);
-      res.body.should.be.an('array');
-      res.body.should.have.lengthOf(2);
+      res.body.should.have.property('totalItems').eql(2);
+      res.body.should.have.property('data').lengthOf(2);
     });
     it('it should prevent simple user role to access user', async () => {
       const res = await chai.request(app)

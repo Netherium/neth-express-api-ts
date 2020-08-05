@@ -1,12 +1,12 @@
 import { Router } from 'express';
+import { BookController } from '../controllers/book.controller';
 import { Auth } from '../middleware/auth';
-import { ArticleController } from '../controllers/article.controller';
 
-export class ArticleRoute {
+export class BookRoute {
   public router = Router();
 
   constructor() {
-    const controller = new ArticleController();
+    const controller = new BookController();
     this.router.get('/', Auth.getAcl(), controller.list);
     this.router.get('/:id', Auth.getAcl(), controller.show);
     this.router.post('/', Auth.getAcl(), controller.create);

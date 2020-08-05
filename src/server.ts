@@ -9,20 +9,21 @@ import * as errorHandler from 'errorhandler';
 import * as swaggerUI from 'swagger-ui-express';
 import * as yaml from 'yamljs';
 /**
- * Import controllers
+ * Import Routes, Services, Helpers
  */
+import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from './helpers/http.responses';
 import { Auth } from './middleware/auth';
-import { UploadRoute } from './routes/upload.route';
+import { UploadService } from './services/upload.service';
+import { EndpointService } from './services/endpoint.service';
+import { MediaObjectRoute } from './routes/media-object.route';
 import { ResourcePermissionRoute } from './routes/resource-permission.route';
 import { RoleRoute } from './routes/role.route';
 import { AuthRoute } from './routes/auth.route';
 import { RootRoute } from './routes/root.route';
 import { UserRoute } from './routes/user.route';
-import { ArticleRoute } from './routes/article.route';
-import { EndpointService } from './services/endpoint.service';
 import { EndpointRoute } from './routes/endpoint.route';
-import { UploadService } from './services/upload.service';
-import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from './helpers/http.responses';
+import { BookRoute } from './routes/book.route';
+
 
 class App {
   public express: express.Application;
@@ -101,9 +102,9 @@ class App {
     this.express.use('/api/users', new UserRoute().router);
     this.express.use('/api/resource-permissions', new ResourcePermissionRoute().router);
     this.express.use('/api/roles', new RoleRoute().router);
-    this.express.use('/api/uploads', new UploadRoute().router);
+    this.express.use('/api/media-objects', new MediaObjectRoute().router);
     this.express.use('/api/endpoints', new EndpointRoute().router);
-    this.express.use('/api/articles', new ArticleRoute().router);
+    this.express.use('/api/books', new BookRoute().router);
   }
 
   /**

@@ -75,9 +75,9 @@ export class AuthController {
   public async update(req: Request, res: Response) {
     const authUser = res.locals.authUser;
     const userEntryModified: any = {
-      ...(req.body.email) && {email: req.body.email},
-      ...(req.body.name) && {name: req.body.name},
-      ...(req.body.password) && {password: req.body.password}
+      ...(req.body.email !== undefined) && {email: req.body.email},
+      ...(req.body.name !== undefined) && {name: req.body.name},
+      ...(req.body.password !== undefined) && {password: req.body.password}
     };
     try {
       const userEntry = await UserModel.findByIdAndUpdate(authUser._id, userEntryModified, {new: true}).populate('role').exec();
@@ -113,7 +113,7 @@ export class AuthController {
    * - Creates an admin User based on .env configuration
    * - Creates a resource permission, with defaults to admin access only,
    *  for each of the following resources
-   *  'roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'articles'
+   *  'roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'books'
    * - Updates Permissions so that will be reflected in all routes instantly
    */
   public async init(req: Request, res: Response) {
@@ -152,7 +152,7 @@ export class AuthController {
       const publicRoleCreated = await publicRoleEntry.save();
       const adminRoleCreated = await adminRoleEntry.save();
       const adminUserCreated = await adminUserEntry.save();
-      const resourceNames = ['roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'articles'];
+      const resourceNames = ['roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'books'];
       const methodNames = ['list', 'show', 'create', 'update', 'delete'];
       const resourcesCreated = [];
       // For each resourceName save a resource-permission that has admin roles to all its methods

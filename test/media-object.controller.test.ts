@@ -5,6 +5,7 @@ import * as chai from 'chai';
 import UserModel from '../src/models/user.model';
 import RoleModel from '../src/models/role.model';
 import ResourcePermissionModel from '../src/models/resource-permission.model';
+import MediaObjectModel from '../src/models/media-object.model';
 import { Document } from 'mongoose';
 import { Auth } from '../src/middleware/auth';
 import { UploadService } from '../src/services/upload.service';
@@ -72,12 +73,13 @@ describe('Uploads Provider: local', () => {
     await UserModel.deleteMany({});
     await ResourcePermissionModel.deleteMany({});
     await RoleModel.deleteMany({});
+    await MediaObjectModel.deleteMany({});
     publicRole = await new RoleModel(publicRoleDetails).save();
     adminRole = await new RoleModel(adminRoleDetails).save();
     publicUser = await new UserModel({...publicUserDetails, role: publicRole}).save();
     adminUser = await new UserModel({...adminUserDetails, role: adminRole}).save();
     const uploadResourcePermission: any = {
-      resourceName: 'uploads',
+      resourceName: 'media-objects',
       methods: [
         {
           roles: [adminRole],
@@ -108,47 +110,47 @@ describe('Uploads Provider: local', () => {
       .send(adminUserDetails);
     tokenAdmin = JSON.parse(res.text).token;
     upload1 = (await chai.request(app)
-      .post('/api/uploads')
+      .post('/api/media-objects')
       .set('Authorization', 'Bearer ' + tokenAdmin)
       .field('alternativeText', upload1Details.alternativeText)
       .field('caption', upload1Details.caption)
       .attach('file', upload1Details.filePath)).body;
   });
-  describe('/GET uploads', () => {
-    it('it should return collection of uploads', async () => {
+  describe('/GET media-objects', () => {
+    it('it should return collection of media-objects', async () => {
       const res = await chai.request(app)
-        .get('/api/uploads')
+        .get('/api/media-objects')
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(200);
     });
   });
-  describe('/GET uploads/:id', () => {
-    it('it should return a single upload', async () => {
+  describe('/GET media-object/:id', () => {
+    it('it should return a single media-object', async () => {
       const res = await chai.request(app)
-        .get(`/api/uploads/${upload1._id}`)
+        .get(`/api/media-objects/${upload1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(200);
       res.body.should.have.property('alternativeText').eqls(upload1Details.alternativeText);
     });
     it('it should return 404 when upload does not exist', async () => {
       const res = await chai.request(app)
-        .get(`/api/uploads/${falseUID}`)
+        .get(`/api/media-objects/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(404);
       res.body.should.have.property('message').eqls('Not Found');
     });
     it('it should return 500 when id not a mongoose uid', async () => {
       const res = await chai.request(app)
-        .get(`/api/uploads/1234`)
+        .get(`/api/media-objects/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
       res.body.should.have.property('message').eqls('Server Error');
     });
   });
-  describe('/POST uploads', () => {
+  describe('/POST media-objects', () => {
     it('it should create upload', async () => {
       const res = await chai.request(app)
-        .post(`/api/uploads`)
+        .post(`/api/media-objects`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .field('alternativeText', newDetails.alternativeText)
         .field('caption', newDetails.caption)
@@ -159,16 +161,16 @@ describe('Uploads Provider: local', () => {
     });
     it('it should return 422 when no file is send', async () => {
       const res = await chai.request(app)
-        .post(`/api/uploads`)
+        .post(`/api/media-objects`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .attach('file', null);
       res.should.have.status(422);
     });
   });
-  describe('/PUT uploads/:id', () => {
-    it('it should update upload', async () => {
+  describe('/PUT media-object/:id', () => {
+    it('it should update media-object', async () => {
       const res = await chai.request(app)
-        .put(`/api/uploads/${upload1._id}`)
+        .put(`/api/media-objects/${upload1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(modifiedUploadDetails);
       res.should.have.status(200);
@@ -177,14 +179,14 @@ describe('Uploads Provider: local', () => {
     });
     it('it should not update upload with false id', async () => {
       const res = await chai.request(app)
-        .put(`/api/uploads/${falseUID}`)
+        .put(`/api/media-objects/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(modifiedUploadDetails);
       res.should.have.status(404);
     });
     it('it should return 500 when id not a mongoose uid', async () => {
       const res = await chai.request(app)
-        .put(`/api/uploads/1234`)
+        .put(`/api/media-objects/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(modifiedUploadDetails);
       res.should.have.status(500);
@@ -192,25 +194,41 @@ describe('Uploads Provider: local', () => {
     });
   });
   describe('/DELETE uploads/:id', () => {
-    it('it should delete upload', async () => {
+    it('it should delete media-object', async () => {
       const res = await chai.request(app)
-        .delete(`/api/uploads/${upload1._id}`)
+        .delete(`/api/media-objects/${upload1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(204);
     });
-    it('it should not delete upload with false id', async () => {
+    it('it should not delete media-object with false id', async () => {
       const res = await chai.request(app)
-        .delete(`/api/uploads/${falseUID}`)
+        .delete(`/api/media-objects/${falseUID}`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(404);
     });
     it('it should return 500 when id not a mongoose uid', async () => {
       const res = await chai.request(app)
-        .delete(`/api/uploads/1234`)
+        .delete(`/api/media-objects/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
       res.body.should.have.property('message').eqls('Server Error');
     });
+  });
+  after(async () => {
+    const allUploads = await chai.request(app)
+      .get(`/api/media-objects?_limit=-1`)
+      .set('Authorization', 'Bearer ' + tokenAdmin);
+    if (allUploads.hasOwnProperty('body')) {
+      for (const upload of allUploads.body.data) {
+        await chai.request(app)
+          .delete(`/api/media-objects/${upload._id}`)
+          .set('Authorization', 'Bearer ' + tokenAdmin);
+      }
+    }
+    await UserModel.deleteMany({});
+    await ResourcePermissionModel.deleteMany({});
+    await RoleModel.deleteMany({});
+    await MediaObjectModel.deleteMany({});
   });
 });
 
@@ -227,12 +245,13 @@ describe('Uploads Provider: do', () => {
     await UserModel.deleteMany({});
     await ResourcePermissionModel.deleteMany({});
     await RoleModel.deleteMany({});
+    await MediaObjectModel.deleteMany({});
     publicRole = await new RoleModel(publicRoleDetails).save();
     adminRole = await new RoleModel(adminRoleDetails).save();
     publicUser = await new UserModel({...publicUserDetails, role: publicRole}).save();
     adminUser = await new UserModel({...adminUserDetails, role: adminRole}).save();
     const uploadResourcePermission: any = {
-      resourceName: 'uploads',
+      resourceName: 'media-objects',
       methods: [
         {
           roles: [adminRole],
@@ -263,7 +282,7 @@ describe('Uploads Provider: do', () => {
       .send(adminUserDetails);
     tokenAdmin = JSON.parse(res.text).token;
     upload1 = (await chai.request(app)
-      .post(`/api/uploads`)
+      .post(`/api/media-objects`)
       .set('Authorization', 'Bearer ' + tokenAdmin)
       .field('alternativeText', upload1Details.alternativeText)
       .field('caption', upload1Details.caption)
@@ -272,7 +291,7 @@ describe('Uploads Provider: do', () => {
   describe(`/POST uploads with remote provider`, () => {
     it('it should create upload', async () => {
       const res = await chai.request(app)
-        .post(`/api/uploads`)
+        .post(`/api/media-objects`)
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .field('alternativeText', newDetails.alternativeText)
         .field('caption', newDetails.caption)
@@ -285,10 +304,26 @@ describe('Uploads Provider: do', () => {
   describe(`/DELETE uploads/:id with remote provider`, () => {
     it('it should delete upload', async () => {
       const res = await chai.request(app)
-        .delete(`/api/uploads/${upload1._id}`)
+        .delete(`/api/media-objects/${upload1._id}`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(204);
     });
+  });
+  after(async () => {
+    const allUploads = await chai.request(app)
+      .get(`/api/media-objects?_limit=-1`)
+      .set('Authorization', 'Bearer ' + tokenAdmin);
+    if (allUploads.hasOwnProperty('body')) {
+      for (const upload of allUploads.body.data) {
+        await chai.request(app)
+          .delete(`/api/media-objects/${upload._id}`)
+          .set('Authorization', 'Bearer ' + tokenAdmin);
+      }
+    }
+    await UserModel.deleteMany({});
+    await ResourcePermissionModel.deleteMany({});
+    await RoleModel.deleteMany({});
+    await MediaObjectModel.deleteMany({});
   });
 });
 

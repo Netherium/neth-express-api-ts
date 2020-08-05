@@ -1,13 +1,21 @@
 import { Request, Response } from 'express';
 import UserModel from '../models/user.model';
-import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK } from '../helpers/http.responses';
+import {
+  HTTP_CREATED,
+  HTTP_INTERNAL_SERVER_ERROR,
+  HTTP_NO_CONTENT,
+  HTTP_NOT_FOUND,
+  HTTP_OK
+} from '../helpers/http.responses';
+import { queryBuilderCollection } from '../helpers/query-builder-collection';
+
 
 /** UserController.ts */
 export class UserController {
   /** UserController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
-      const userCollection = await UserModel.find().populate(['role']).exec();
+      const userCollection = await queryBuilderCollection(req, UserModel, [{path: 'role'}]);
       return HTTP_OK(res, userCollection);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
@@ -50,11 +58,11 @@ export class UserController {
   public async update(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     const userUpdateData = {
-      ...(req.body.email) && {email: req.body.email},
-      ...(req.body.name) && {name: req.body.name},
-      ...(req.body.role) && {role: req.body.role},
-      ...(req.body.isVerified) && {isVerified: req.body.isVerified},
-      ...(req.body.password) && {password: req.body.password}
+      ...(req.body.email !== undefined) && {email: req.body.email},
+      ...(req.body.name !== undefined) && {name: req.body.name},
+      ...(req.body.role !== undefined) && {role: req.body.role},
+      ...(req.body.isVerified !== undefined) && {isVerified: req.body.isVerified},
+      ...(req.body.password !== undefined) && {password: req.body.password}
     };
     try {
       const userUpdated = await UserModel.findByIdAndUpdate(id, userUpdateData, {new: true}).populate('role').exec();

@@ -21,7 +21,7 @@ tags:
   - name: Roles
   - name: ResourcePermissions
   - name: Uploads
-  - name: Articles
+  - name: Books
 paths:
   /auth/login:
     post:
@@ -528,10 +528,10 @@ paths:
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  /articles:
+  /books:
     get:
       tags:
-        - Articles
+        - Books
       responses:
         "200":
           content:
@@ -539,35 +539,35 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Article"
+                  $ref: "#/components/schemas/Book"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     post:
       tags:
-        - Articles
+        - Books
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Article"
+              $ref: "#/components/schemas/Book"
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Article"
+                $ref: "#/components/schemas/Book"
         "404":
           $ref: "#/components/responses/HTTP_NOT_FOUND"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  "/articles/{id}":
+  "/books/{id}":
     get:
       tags:
-        - Articles
+        - Books
       parameters:
         - name: id
           in: path
@@ -579,7 +579,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Article"
+                $ref: "#/components/schemas/Book"
         "404":
           $ref: "#/components/responses/HTTP_NOT_FOUND"
         "500":
@@ -588,7 +588,7 @@ paths:
         - Bearer: []
     put:
       tags:
-        - Articles
+        - Books
       parameters:
         - name: id
           in: path
@@ -599,13 +599,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Article"
+              $ref: "#/components/schemas/Book"
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Article"
+                $ref: "#/components/schemas/Book"
         "404":
           $ref: "#/components/responses/HTTP_NOT_FOUND"
         "500":
@@ -614,7 +614,7 @@ paths:
         - Bearer: []
     delete:
       tags:
-        - Articles
+        - Books
       parameters:
         - name: id
           in: path
@@ -862,7 +862,7 @@ components:
           readOnly: true
         resourceName:
           type: string
-          example: Public
+          example: books
         methods:
           type: array
           items:
@@ -887,7 +887,7 @@ components:
       required:
         - name
         - isAuthenticated
-    Article:
+    Book:
       type: object
       properties:
         _id:
@@ -895,8 +895,25 @@ components:
           readOnly: true
         title:
           type: string
+        isbn:
+          type: number
         author:
           $ref: "#/components/schemas/User"
+        isPublished:
+          type: boolean
+        cover:
+          $ref: "#/components/schemas/MediaObject"
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaObject"
+        publishedAt:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
         createdAt:
           type: string
           format: date-time
@@ -907,6 +924,9 @@ components:
           readOnly: true
       required:
         - title
+        - isbn
+        - author
+        - publishedAt
   securitySchemes:
     Bearer:
       type: http
