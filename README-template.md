@@ -22,7 +22,8 @@
 - [Resource Permissions](#resource-permissions)
 - [Coding Tips](#coding-tips)
 - [Structure](#structure)
-- [Uploads](#uploads)
+- [Media Objects](#media-objects)
+- [Query Parameters](#query-parameters)
 - [Tests](#tests)
 - [Debug](#debug)
 - [Authors](#authors)
@@ -72,7 +73,7 @@
 - Typescript Intellisense Awesomeness
 - Robust routing and middleware based on same principles of Express
 - MongoDB integration
-- Elasticsearch integration (soon™)
+- ~~Elasticsearch integration~~ (soon™), replaced with 'mongoose-fuzzy-searching'
 - Protected routes, ACL based with middleware, using [`jwt-token`](https://jwt.io/)
 - File Upload routes and thumbnail generator
 - Test and Coverage
@@ -101,8 +102,8 @@ Each one of them is being reflected by its own `route`, `controller`, `model`
 #### Users
 - :closed_lock_with_key: `api/users` [GET, GET `/:id`, POST, PUT `/:id`, DELETE `/:id`]
 
-#### Uploads
-- :closed_lock_with_key: `api/uploads` [GET, GET `/:id`, POST, PUT `/:id`, DELETE `/:id`]
+#### Media Objects
+- :closed_lock_with_key: `api/media-objects` [GET, GET `/:id`, POST, PUT `/:id`, DELETE `/:id`]
 
 #### Docs
 - :unlock: `api/docs` [GET]
@@ -113,15 +114,15 @@ Each one of them is being reflected by its own `route`, `controller`, `model`
 #### Endpoints
 - :closed_lock_with_key: `api/endpoints` [GET]
 
-#### Articles (Example Resource Route)
-- :closed_lock_with_key: `api/articles` [GET, GET `/:id`, POST, PUT `/:id`, DELETE `/:id`]
+#### Books (Provided example Resource Route)
+- :closed_lock_with_key: `api/books` [GET, GET `/:id`, POST, PUT `/:id`, DELETE `/:id`]
 
 ## Resource Permissions
 
 - Add a new route with Access-Control List (ACL) by invoking middleware function `Auth.getACL()`
-I.e. file `article.route.ts`
+I.e. file `book.route.ts`
 ```typescript
-    export class ArticleRoute {
+    export class BookRoute {
       constructor() {
         this.router.get('/', Auth.getAcl(), controller.list);
         ...
@@ -135,7 +136,7 @@ I.e. file `article.route.ts`
 ```bash
 POST api/resource-permissions
 {
-    resourceName: 'articles',
+    resourceName: 'books',
     methods: [
         {
             name: 'list',
@@ -192,20 +193,36 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
     └── README.md           # This File
 
 
-## Uploads
+## Media Objects
 
-- Uploads can be stored locally or remotely, see `.env`
-- To upload a file `POST api/uploads` with `Content-Type: multipart/form-data;` or use [Postman](https://www.postman.com/)
+- MediaObjects can be stored locally or remotely, see `.env`
+- To upload a file `POST api/media-objects` with `Content-Type: multipart/form-data;` or use [Postman](https://www.postman.com/)
 - Field `file` is the file data, `altenativeText`, `caption` are optional strings
-- `PUT api/uploads/:id` accepts `Content-Type: application/json;` as only `altenativeText`, `caption` can be modified
-- If file of image type, a thumbnail (80x80) will be generated
+- `PUT api/media-objects/:id` accepts `Content-Type: application/json;` as only `altenativeText`, `caption` can be modified
+- If file is of image type, a thumbnail (80x80) will be generated
+
+## Query Parameters
+
+The following query parameters are available for all routes
+
+Key | Type | Description | Example | Notes
+:---: | --- | --- | --- | :---:  
+`_eq` | Suffix |  property equal to | `api/books?title_eq=Lord of the rings` | - 
+`_ne` | Suffix |  property not equal to | `api/books?title_ne=Lord of the rings` | -
+`_lt` | Suffix |  property less than | `api/books?isbn_lt=1235466` | -
+`_lte` | Suffix |  property less or equal | `api/books?isbn_lte=1235466` | -
+`_gt` | Suffix |  property greater than | `api/books?isbn_gt=1235466` | -
+`_gte` | Suffix |  property greater or equal | `api/books?isbn_gte=123546`6 | -
+`_sort` | Parameter |  sort by property | `api/books?_sort=-isbn` | use `-` for desc
+`_limit` | Parameter |  limit by a number  | `api/books?_limit=-1` | use -1 for unlimited<br>**Default: All list routes have limit=10**
+`_page` | Parameter |  get paginated results | `api/books?_limit=-1` | use with `_limit`
 
 
 ## Tests
 
 Testing is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [chai-http](https://www.npmjs.com/package/chai-http)
 
-Run tests
+Run tests, based on `.env.test`
 ```bash
 $ npm test
 ```

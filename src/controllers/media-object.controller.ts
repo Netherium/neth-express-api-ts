@@ -6,9 +6,9 @@ import {
   HTTP_NO_CONTENT,
   HTTP_NOT_FOUND,
   HTTP_OK,
-  HTTP_UNPROCESSABLE_ENTITY, HTTP_UNSUPPORTED_MEDIA_TYPE
+  HTTP_UNPROCESSABLE_ENTITY
 } from '../helpers/http.responses';
-import { isMimeTypePhoto, UploadService } from '../services/upload.service';
+import { UploadService } from '../services/upload.service';
 import { UploadedFile } from 'express-fileupload';
 import { queryBuilderCollection } from '../helpers/query-builder-collection';
 

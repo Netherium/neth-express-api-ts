@@ -2,23 +2,6 @@ import { Request } from 'express';
 import { Model, QueryPopulateOptions } from 'mongoose';
 
 export const queryBuilderCollection = async (req: Request, model: Model<any>, populateOptions: QueryPopulateOptions[] = []) => {
-  // where('name.last').equals('Ghost').
-  // where('age').gt(17).lt(66).
-  // where('likes').in(['vaporizing', 'talking']).
-  // limit(10).
-  // sort('-occupation').
-  // select('name occupation').
-  // ne: Not equals
-  // lt: Less than
-  // gt: Greater than
-  // lte: Less than or equal to
-  // gte: Greater than or equal to
-  // in: Included in an array of values
-  // nin: Isn't included in an array of values
-  // contains: Contains
-  // ncontains: Doesn't contain
-  // containss: Contains case sensitive
-  // ncontainss: Doesn't contain case sensitive
   let limit = 10;
   let page = 1;
   let query = model.find();
@@ -26,7 +9,7 @@ export const queryBuilderCollection = async (req: Request, model: Model<any>, po
   if (Object.keys(req.query).length > 0) {
     if (req.query.q && typeof req.query.q !== 'undefined') {
       hasfuzzySearch = true;
-        // @ts-ignore
+      // @ts-ignore
       query = model.fuzzySearch(req.query.q);
       console.log(hasfuzzySearch);
       delete req.query.q;
@@ -86,9 +69,8 @@ export const queryBuilderCollection = async (req: Request, model: Model<any>, po
   }
   const results = await query.exec();
   const total = hasfuzzySearch ? results.length : await model.countDocuments();
-  const collection = {
+  return {
     totalItems: total,
     data: results
   };
-  return collection;
 };

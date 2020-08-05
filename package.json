@@ -60,7 +60,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@olavoparno/jest-badges-readme": "^1.5.1",
+    "@olavoparno/jest-badges-readme": "^1.4.2",
     "@types/body-parser": "^1.19.0",
     "@types/compression": "0.0.36",
     "@types/cors": "^2.8.7",
