@@ -19,7 +19,7 @@ export interface MediaObject {
   url: string;
   path: string;
   provider: string;
-  provider_metadata: string;
+  providerMetadata: string;
   thumbnail?: {
     hash: string;
     ext: string;
@@ -140,7 +140,7 @@ export class UploadService {
       url: fileUrl,
       path: filePath,
       provider: process.env.UPLOAD_PROVIDER,
-      provider_metadata: null
+      providerMetadata: null
     };
 
     let thumbBuffer: Buffer;

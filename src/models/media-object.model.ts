@@ -19,7 +19,7 @@ const mediaObjectSchema = new Schema({
   url: String,
   path: String,
   provider: String,
-  provider_metadata: String,
+  providerMetadata: String,
   thumbnail: {
     hash: String,
     ext: String,

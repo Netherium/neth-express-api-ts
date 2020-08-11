@@ -768,7 +768,7 @@ components:
         provider:
           type: string
           readOnly: true
-        provider_metadata:
+        providerMetadata:
           type: string
           readOnly: true
         thumbnail:

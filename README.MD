@@ -4,7 +4,7 @@
 <h4 align="center">A RESTful API written in Typescript using <a href="https://github.com/expressjs/express" target="_blank">Express</a></h4>
 <h5 align="center">JWT auth, Access-Control Lists (ACL), Uploads, MongoDB in one :package: </h5>
 <div align="center">
-    <img src="https://img.shields.io/badge/Coverage-92.81%25-brightgreen.svg" alt="Lines Covered">
+    <img src="https://img.shields.io/badge/Coverage-92.8%25-brightgreen.svg" alt="Lines Covered">
     <img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg" alt="Build Status">
     <img src="https://img.shields.io/badge/Node-%3E=12.0.0-grey?logo=node.js&color=339933" alt="Node Version Required">
     <img src="https://img.shields.io/badge/Built%20with-Typescript-blue" alt="Built with Typescript">
@@ -73,7 +73,7 @@
 - Typescript Intellisense Awesomeness
 - Robust routing and middleware based on same principles of Express
 - MongoDB integration
-- Elasticsearch integration (soon™)
+- ~~Elasticsearch integration~~ (soon™), replaced with 'mongoose-fuzzy-searching'
 - Protected routes, ACL based with middleware, using [`jwt-token`](https://jwt.io/)
 - File Upload routes and thumbnail generator
 - Test and Coverage
@@ -222,7 +222,7 @@ Key | Type | Description | Example | Notes
 
 Testing is based on [Mocha](https://www.npmjs.com/package/mocha), [chai](https://www.npmjs.com/package/chai) and [chai-http](https://www.npmjs.com/package/chai-http)
 
-Run tests
+Run tests, based on `.env.test`
 ```bash
 $ npm test
 ```
