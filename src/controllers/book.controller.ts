@@ -8,7 +8,7 @@ export class BookController {
   /** BookController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
-      const bookCollection = await queryBuilderCollection(req, BookModel, [{path: 'author'}, {path: 'cover'}, {path: 'images'},]);
+      const bookCollection = await queryBuilderCollection(req, BookModel, [{path: 'author'}, {path: 'cover'}, {path: 'images'}, ]);
       return HTTP_OK(res, bookCollection);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

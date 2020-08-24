@@ -20,7 +20,7 @@ tags:
   - name: Users
   - name: Roles
   - name: ResourcePermissions
-  - name: Uploads
+  - name: MediaObjects
   - name: Books
 paths:
   /auth/login:
@@ -129,9 +129,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserCollection"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
@@ -231,9 +229,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Role"
+                $ref: "#/components/schemas/RoleCollection"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
@@ -333,9 +329,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ResourcePermission"
+                $ref: "#/components/schemas/ResourcePermissionCollection"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
@@ -426,25 +420,23 @@ paths:
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  /uploads:
+  /media-objects:
     get:
       tags:
-        - Uploads
+        - MediaObjects
       responses:
         "200":
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MediaObject"
+                $ref: "#/components/schemas/MediaObjectCollection"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
     post:
       tags:
-        - Uploads
+        - MediaObjects
       requestBody:
         content:
           multipart/form-data:
@@ -462,10 +454,10 @@ paths:
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
         - Bearer: []
-  "/uploads/{id}":
+  "/media-objects/{id}":
     get:
       tags:
-        - Uploads
+        - MediaObjects
       parameters:
         - name: id
           in: path
@@ -486,7 +478,7 @@ paths:
         - Bearer: []
     put:
       tags:
-        - Uploads
+        - MediaObjects
       parameters:
         - name: id
           in: path
@@ -512,7 +504,7 @@ paths:
         - Bearer: []
     delete:
       tags:
-        - Uploads
+        - MediaObjects
       parameters:
         - name: id
           in: path
@@ -537,9 +529,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Book"
+                $ref: "#/components/schemas/BookCollection"
         "500":
           $ref: "#/components/responses/HTTP_INTERNAL_SERVER_ERROR"
       security:
@@ -728,6 +718,90 @@ components:
         - name
         - role
         - password
+    UserCollection:
+      type: object
+      properties:
+        totalItems:
+          type: number
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+    Role:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          example: Public
+        isAuthenticated:
+          type: boolean
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - name
+        - isAuthenticated
+    RoleCollection:
+      type: object
+      properties:
+        totalItems:
+          type: number
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+    ResourcePermission:
+      type: object
+      properties:
+        _id:
+          type: string
+          readOnly: true
+        resourceName:
+          type: string
+          example: books
+        methods:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              roles:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Role"
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+        - name
+        - isAuthenticated
+    ResourcePermissionCollection:
+      type: object
+      properties:
+        totalItems:
+          type: number
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ResourcePermission"
     MediaObject:
       type: object
       properties:
@@ -806,6 +880,15 @@ components:
           type: string
           format: date-time
           readOnly: true
+    MediaObjectCollection:
+      type: object
+      properties:
+        totalItems:
+          type: number
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/MediaObject"
     Error:
       type: object
       properties:
@@ -818,30 +901,6 @@ components:
       properties:
         token:
           type: string
-    Role:
-      type: object
-      properties:
-        _id:
-          type: string
-          readOnly: true
-        name:
-          type: string
-          example: Public
-        isAuthenticated:
-          type: boolean
-        description:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-          readOnly: true
-        updatedAt:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-        - name
-        - isAuthenticated
     FileUpload:
       type: object
       required:
@@ -854,39 +913,6 @@ components:
         file:
           type: string
           format: binary
-    ResourcePermission:
-      type: object
-      properties:
-        _id:
-          type: string
-          readOnly: true
-        resourceName:
-          type: string
-          example: books
-        methods:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              roles:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Role"
-        description:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-          readOnly: true
-        updatedAt:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-        - name
-        - isAuthenticated
     Book:
       type: object
       properties:
@@ -927,6 +953,15 @@ components:
         - isbn
         - author
         - publishedAt
+    BookCollection:
+      type: object
+      properties:
+        totalItems:
+          type: number
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Book"
   securitySchemes:
     Bearer:
       type: http

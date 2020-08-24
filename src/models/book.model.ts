@@ -1,5 +1,7 @@
 import * as mongoose from 'mongoose';
 
+const fuzzySearching = require('mongoose-fuzzy-searching');
+
 const Schema = mongoose.Schema;
 const bookSchema = new Schema({
   title: {
@@ -37,4 +39,7 @@ const bookSchema = new Schema({
     }
   ]
 }, {timestamps: true});
+
+bookSchema.plugin(fuzzySearching, {fields: ['title']});
+
 export default mongoose.model('book', bookSchema);

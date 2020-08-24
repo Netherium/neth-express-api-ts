@@ -20,6 +20,10 @@ const userSchema = new Schema({
     ref: 'role',
     required: true,
   },
+  display: {
+    type: Schema.Types.ObjectId,
+    ref: 'mediaObject'
+  },
   isVerified: {
     type: Boolean,
     default: false

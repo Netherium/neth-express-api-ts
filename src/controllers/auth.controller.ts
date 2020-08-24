@@ -39,7 +39,7 @@ export class AuthController {
   public async show(req: Request, res: Response) {
     const authUser = res.locals.authUser;
     try {
-      const userEntry = await UserModel.findOne({_id: authUser._id}).populate('role').exec();
+      const userEntry = await UserModel.findOne({_id: authUser._id}).populate('role').populate('display').exec();
       if (!userEntry) {
         return HTTP_NOT_FOUND(res);
       }
@@ -59,6 +59,7 @@ export class AuthController {
         email: req.body.email,
         name: req.body.name,
         role: publicRole,
+        display: req.body.display,
         isVerified: false,
         password: req.body.password
       });
@@ -77,7 +78,8 @@ export class AuthController {
     const userEntryModified: any = {
       ...(req.body.email !== undefined) && {email: req.body.email},
       ...(req.body.name !== undefined) && {name: req.body.name},
-      ...(req.body.password !== undefined) && {password: req.body.password}
+      ...(req.body.password !== undefined) && {password: req.body.password},
+      ...(req.body.display !== undefined) && {display: req.body.display}
     };
     try {
       const userEntry = await UserModel.findByIdAndUpdate(authUser._id, userEntryModified, {new: true}).populate('role').exec();
@@ -113,7 +115,7 @@ export class AuthController {
    * - Creates an admin User based on .env configuration
    * - Creates a resource permission, with defaults to admin access only,
    *  for each of the following resources
-   *  'roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'books'
+   *  'roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'articles'
    * - Updates Permissions so that will be reflected in all routes instantly
    */
   public async init(req: Request, res: Response) {
@@ -152,7 +154,7 @@ export class AuthController {
       const publicRoleCreated = await publicRoleEntry.save();
       const adminRoleCreated = await adminRoleEntry.save();
       const adminUserCreated = await adminUserEntry.save();
-      const resourceNames = ['roles', 'users', 'resource-permissions', 'endpoints', 'uploads', 'books'];
+      const resourceNames = ['roles', 'users', 'resource-permissions', 'endpoints', 'media-objects', 'books'];
       const methodNames = ['list', 'show', 'create', 'update', 'delete'];
       const resourcesCreated = [];
       // For each resourceName save a resource-permission that has admin roles to all its methods
