@@ -8,7 +8,7 @@ import {
   HTTP_OK,
   HTTP_UNPROCESSABLE_ENTITY
 } from '../helpers/http.responses';
-import { UploadService } from '../services/upload.service';
+import { MediaObject, UploadService } from '../services/upload.service';
 import { UploadedFile } from 'express-fileupload';
 import { queryBuilderCollection } from '../helpers/query-builder-collection';
 
@@ -87,7 +87,7 @@ export class MediaObjectController {
       if (!mediaObjectDeleted) {
         return HTTP_NOT_FOUND(res);
       }
-      await uploadService.deleteFile(mediaObjectDeleted.toObject());
+      await uploadService.deleteFile(mediaObjectDeleted.toObject() as MediaObject);
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);

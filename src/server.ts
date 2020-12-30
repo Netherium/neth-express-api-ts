@@ -94,7 +94,12 @@ class App {
    */
   private routes() {
     this.express.use('/', new RootRoute().router);
-    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml'), {}));
+    const swaggerOptions = {
+      swaggerOptions: {
+        layout: 'BaseLayout'
+      }
+    };
+    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml'), swaggerOptions));
     if (process.env.UPLOAD_PROVIDER === 'local') {
       this.express.use('/uploads', express.static(process.env.UPLOAD_PROVIDER_FOLDER));
     }
@@ -105,6 +110,7 @@ class App {
     this.express.use('/api/media-objects', new MediaObjectRoute().router);
     this.express.use('/api/endpoints', new EndpointRoute().router);
     this.express.use('/api/books', new BookRoute().router);
+    this.express.use('/api/posts', new BookRoute().router);
   }
 
   /**

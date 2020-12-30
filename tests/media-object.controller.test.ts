@@ -42,13 +42,13 @@ const publicUserDetails = {
 const upload1Details = {
   alternativeText: 'alternativeText upload1',
   caption: 'caption upload1',
-  filePath: './test/assets/sample.png'
+  filePath: './tests/assets/sample.png'
 };
 
 const newDetails = {
   alternativeText: 'alternativeText new',
   caption: 'caption new',
-  filePath: './test/assets/sample.png'
+  filePath: './tests/assets/sample.png'
 };
 
 const modifiedUploadDetails = {

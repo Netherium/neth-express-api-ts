@@ -64,7 +64,8 @@ export class AuthController {
         password: req.body.password
       });
       const userCreated = await userEntry.save();
-      return HTTP_CREATED(res, userCreated);
+      const userCreatedPopulated = await userCreated.populate('role').populate('display').execPopulate();
+      return HTTP_CREATED(res, userCreatedPopulated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
@@ -75,18 +76,26 @@ export class AuthController {
    */
   public async update(req: Request, res: Response) {
     const authUser = res.locals.authUser;
-    const userEntryModified: any = {
-      ...(req.body.email !== undefined) && {email: req.body.email},
-      ...(req.body.name !== undefined) && {name: req.body.name},
-      ...(req.body.password !== undefined) && {password: req.body.password},
-      ...(req.body.display !== undefined) && {display: req.body.display}
-    };
     try {
-      const userEntry = await UserModel.findByIdAndUpdate(authUser._id, userEntryModified, {new: true}).populate('role').exec();
-      if (!userEntry) {
+      const userFound = await UserModel.findById(authUser._id);
+      if (!userFound) {
         return HTTP_NOT_FOUND(res);
       }
-      return HTTP_OK(res, userEntry);
+      if (req.body.email !== undefined) {
+        userFound.set('email', req.body.email);
+      }
+      if (req.body.name !== undefined) {
+        userFound.set('name', req.body.name);
+      }
+      if (req.body.password !== undefined) {
+        userFound.set('password', req.body.password);
+      }
+      if (req.body.display !== undefined) {
+        userFound.set('display', req.body.display);
+      }
+      const userUpdated = await userFound.save();
+      const userUpdatedPopulated = await userUpdated.populate('role').populate('display').execPopulate();
+      return HTTP_OK(res, userUpdatedPopulated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
