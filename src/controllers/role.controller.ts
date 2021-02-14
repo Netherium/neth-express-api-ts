@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import RoleModel from '../models/role.model';
 import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK } from '../helpers/http.responses';
 import { queryBuilderCollection } from '../helpers/query-builder-collection';
+import { Auth } from '../middleware/auth';
 
 
 /** RoleController.ts */
@@ -39,6 +40,7 @@ export class RoleController {
     });
     try {
       const roleCreated = await roleEntry.save();
+      await Auth.updateAppPermissions(req);
       return HTTP_CREATED(res, roleCreated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
@@ -58,6 +60,7 @@ export class RoleController {
       if (!roleUpdated) {
         return HTTP_NOT_FOUND(res);
       }
+      await Auth.updateAppPermissions(req);
       return HTTP_OK(res, roleUpdated);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
@@ -72,6 +75,7 @@ export class RoleController {
       if (!roleDeleted) {
         return HTTP_NOT_FOUND(res);
       }
+      await Auth.updateAppPermissions(req);
       return HTTP_NO_CONTENT(res);
     } catch (err) {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
