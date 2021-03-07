@@ -7,6 +7,7 @@ import * as cors from 'cors';
 import * as mongoose from 'mongoose';
 import * as errorHandler from 'errorhandler';
 import * as swaggerUI from 'swagger-ui-express';
+import { SwaggerUiOptions } from 'swagger-ui-express';
 import * as yaml from 'yamljs';
 /**
  * Import Routes, Services, Helpers
@@ -23,7 +24,6 @@ import { RootRoute } from './routes/root.route';
 import { UserRoute } from './routes/user.route';
 import { EndpointRoute } from './routes/endpoint.route';
 import { BookRoute } from './routes/book.route';
-
 
 class App {
   public express: express.Application;
@@ -94,12 +94,13 @@ class App {
    */
   private routes() {
     this.express.use('/', new RootRoute().router);
-    const swaggerOptions = {
+    const options: SwaggerUiOptions = {
+      customSiteTitle: 'Neth-Express-Api-TS',
       swaggerOptions: {
-        layout: 'BaseLayout'
+        layout: 'BaseLayout',
       }
     };
-    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml'), swaggerOptions));
+    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml'), options));
     if (process.env.UPLOAD_PROVIDER === 'local') {
       this.express.use('/uploads', express.static(process.env.UPLOAD_PROVIDER_FOLDER));
     }
@@ -110,7 +111,6 @@ class App {
     this.express.use('/api/media-objects', new MediaObjectRoute().router);
     this.express.use('/api/endpoints', new EndpointRoute().router);
     this.express.use('/api/books', new BookRoute().router);
-    this.express.use('/api/posts', new BookRoute().router);
   }
 
   /**

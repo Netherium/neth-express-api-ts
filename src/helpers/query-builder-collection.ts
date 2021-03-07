@@ -26,19 +26,19 @@ export const queryBuilderCollection = async (req: Request, model: Model<any>, po
           break;
         case queryParam.endsWith('_lt'):
           searchField = queryParam.slice(0, -3);
-          query = query.where(searchField).lt(paramValue);
+          query = query.where(searchField).lt(+paramValue);
           break;
         case queryParam.endsWith('_lte'):
           searchField = queryParam.slice(0, -4);
-          query = query.where(searchField).lte(paramValue);
+          query = query.where(searchField).lte(+paramValue);
           break;
         case queryParam.endsWith('_gt'):
           searchField = queryParam.slice(0, -3);
-          query = query.where(searchField).gt(paramValue);
+          query = query.where(searchField).gt(+paramValue);
           break;
         case queryParam.endsWith('_gte'):
           searchField = queryParam.slice(0, -4);
-          query = query.where(searchField).gte(paramValue);
+          query = query.where(searchField).gte(+paramValue);
           break;
         case queryParam === '_sort':
           query = query.sort(paramValue);

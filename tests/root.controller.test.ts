@@ -1,11 +1,12 @@
 process.env.NODE_ENV = 'test';
-import App from '../src/server';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
+import App from '../src/server';
+
+chai.use(chaiHttp);
+chai.should();
 
 const app = App.express;
-chai.use(chaiHttp);
-const should = chai.should();
 
 describe('Base Routes', () => {
   describe('/GET root', () => {

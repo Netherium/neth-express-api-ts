@@ -57,24 +57,15 @@ export class UserController {
       if (!userFound) {
         return HTTP_NOT_FOUND(res);
       }
-      if (req.body.email !== undefined) {
-        userFound.set('email', req.body.email);
-      }
-      if (req.body.name !== undefined) {
-        userFound.set('name', req.body.name);
-      }
-      if (req.body.role !== undefined) {
-        userFound.set('role', req.body.role);
-      }
-      if (req.body.display !== undefined) {
-        userFound.set('display', req.body.display);
-      }
-      if (req.body.isVerified !== undefined) {
-        userFound.set('isVerified', req.body.isVerified);
-      }
-      if (req.body.password !== undefined) {
-        userFound.set('password', req.body.password);
-      }
+      const userUpdateData = {
+        ...(req.body.email !== undefined) && {email: req.body.email},
+        ...(req.body.name !== undefined) && {name: req.body.name},
+        ...(req.body.role !== undefined) && {role: req.body.role},
+        ...(req.body.display !== undefined) && {display: req.body.display},
+        ...(req.body.isVerified !== undefined) && {isVerified: req.body.isVerified},
+        ...(req.body.password !== undefined) && {password: req.body.password}
+      };
+      userFound.set(userUpdateData);
       const userUpdated = await userFound.save();
       const userUpdatedPopulated = await userUpdated.populate('role').populate('display').execPopulate();
       return HTTP_OK(res, userUpdatedPopulated);

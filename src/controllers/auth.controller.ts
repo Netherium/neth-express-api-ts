@@ -18,9 +18,7 @@ import { Auth } from '../middleware/auth';
  */
 export class AuthController {
 
-  /**
-   * AuthController.login()
-   */
+  /** AuthController.login() */
   public async getToken(req: Request, res: Response) {
     try {
       const userEntry: any = await UserModel.findOne({email: req.body.email}).populate('role');
@@ -33,9 +31,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * AuthController.profile()
-   */
+  /** AuthController.profile() */
   public async show(req: Request, res: Response) {
     const authUser = res.locals.authUser;
     try {
@@ -49,9 +45,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * AuthController.register()
-   */
+  /** AuthController.register() */
   public async create(req: Request, res: Response): Promise<Response> {
     try {
       const publicRole = await RoleModel.findOne({isAuthenticated: false});
@@ -71,9 +65,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * AuthController.update()
-   */
+  /** AuthController.update() */
   public async update(req: Request, res: Response) {
     const authUser = res.locals.authUser;
     try {
@@ -81,18 +73,13 @@ export class AuthController {
       if (!userFound) {
         return HTTP_NOT_FOUND(res);
       }
-      if (req.body.email !== undefined) {
-        userFound.set('email', req.body.email);
-      }
-      if (req.body.name !== undefined) {
-        userFound.set('name', req.body.name);
-      }
-      if (req.body.password !== undefined) {
-        userFound.set('password', req.body.password);
-      }
-      if (req.body.display !== undefined) {
-        userFound.set('display', req.body.display);
-      }
+      const userUpdateData = {
+        ...(req.body.email !== undefined) && {email: req.body.email},
+        ...(req.body.name !== undefined) && {name: req.body.name},
+        ...(req.body.password !== undefined) && {password: req.body.password},
+        ...(req.body.display !== undefined) && {display: req.body.display}
+      };
+      userFound.set(userUpdateData);
       const userUpdated = await userFound.save();
       const userUpdatedPopulated = await userUpdated.populate('role').populate('display').execPopulate();
       return HTTP_OK(res, userUpdatedPopulated);
@@ -101,9 +88,7 @@ export class AuthController {
     }
   }
 
-  /**
-   * AuthController.delete()
-   */
+  /** AuthController.delete() */
   public async delete(req: Request, res: Response) {
     const id = res.locals.authUser;
     try {

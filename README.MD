@@ -4,7 +4,7 @@
 <h4 align="center">A RESTful API written in Typescript using <a href="https://github.com/expressjs/express" target="_blank">Express</a></h4>
 <h5 align="center">JWT auth, Access-Control Lists (ACL), Uploads, MongoDB in one :package: </h5>
 <div align="center">
-    <img src="https://img.shields.io/badge/Coverage-92.33%25-brightgreen.svg" alt="Lines Covered">
+    <img src="https://img.shields.io/badge/Coverage-93.56%25-brightgreen.svg" alt="Lines Covered">
     <img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg" alt="Build Status">
     <img src="https://img.shields.io/badge/Node-%3E=12.0.0-grey?logo=node.js&color=339933" alt="Node Version Required">
     <img src="https://img.shields.io/badge/Built%20with-Typescript-blue" alt="Built with Typescript">
