@@ -206,7 +206,8 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
 The following query parameters are available for all routes
 
 Key | Type | Description | Example | Notes
-:---: | --- | --- | --- | :---:  
+:---: | --- | --- | --- | :---:
+`q` | Parameter |  search like | `api/books?q=rings` | searches all fields that have fuzzy search enabled
 `_eq` | Suffix |  property equal to | `api/books?title_eq=Lord of the rings` | - 
 `_ne` | Suffix |  property not equal to | `api/books?title_ne=Lord of the rings` | -
 `_lt` | Suffix |  property less than | `api/books?isbn_lt=1235466` | -
