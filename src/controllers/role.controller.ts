@@ -4,9 +4,9 @@ import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOU
 import { queryBuilderCollection } from '../helpers/query-builder-collection';
 import { Auth } from '../middleware/auth';
 
-
 /** RoleController.ts */
 export class RoleController {
+
   /** RoleController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
@@ -81,4 +81,5 @@ export class RoleController {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
+
 }

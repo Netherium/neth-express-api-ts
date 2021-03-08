@@ -13,8 +13,8 @@ import ResourcePermissionModel from '../models/resource-permission.model';
 import { Auth } from '../middleware/auth';
 
 /**
- * auth.controller.ts
- * @description :: Server-side logic for managing users.
+ * AuthController.ts
+ * @description :: Server-side logic for managing Authentication.
  */
 export class AuthController {
 
@@ -183,4 +183,5 @@ export class AuthController {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
+
 }

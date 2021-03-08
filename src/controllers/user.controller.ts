@@ -3,9 +3,9 @@ import UserModel from '../models/user.model';
 import { HTTP_CREATED, HTTP_INTERNAL_SERVER_ERROR, HTTP_NO_CONTENT, HTTP_NOT_FOUND, HTTP_OK } from '../helpers/http.responses';
 import { queryBuilderCollection } from '../helpers/query-builder-collection';
 
-
 /** UserController.ts */
 export class UserController {
+
   /** UserController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
@@ -87,4 +87,5 @@ export class UserController {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
+
 }

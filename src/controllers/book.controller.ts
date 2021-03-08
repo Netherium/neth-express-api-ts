@@ -5,6 +5,7 @@ import { queryBuilderCollection } from '../helpers/query-builder-collection';
 
 /** BookController.ts */
 export class BookController {
+
   /** BookController.list() */
   public async list(req: Request, res: Response): Promise<Response> {
     try {
@@ -93,4 +94,5 @@ export class BookController {
       return HTTP_INTERNAL_SERVER_ERROR(res, err);
     }
   }
+
 }
