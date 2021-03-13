@@ -29,7 +29,7 @@ export class MediaObjectController {
   public async show(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const mediaObjectEntry = await MediaObjectModel.findOne({_id: id});
+      const mediaObjectEntry = await MediaObjectModel.findOne({_id: id}).exec();
       if (!mediaObjectEntry) {
         return HTTP_NOT_FOUND(res);
       }
@@ -68,7 +68,7 @@ export class MediaObjectController {
       ...(req.body.caption !== undefined) && {caption: req.body.caption}
     };
     try {
-      const mediaObjectUpdated = await MediaObjectModel.findByIdAndUpdate(id, mediaObjectModified, {new: true});
+      const mediaObjectUpdated = await MediaObjectModel.findByIdAndUpdate(id, mediaObjectModified, {new: true}).exec();
       if (!mediaObjectUpdated) {
         return HTTP_NOT_FOUND(res);
       }
@@ -83,7 +83,7 @@ export class MediaObjectController {
     const id = req.params.id;
     try {
       const {uploadService}: { uploadService: UploadService } = req.app.get('services');
-      const mediaObjectDeleted = await MediaObjectModel.findByIdAndDelete(id);
+      const mediaObjectDeleted = await MediaObjectModel.findByIdAndDelete(id).exec();
       if (!mediaObjectDeleted) {
         return HTTP_NOT_FOUND(res);
       }

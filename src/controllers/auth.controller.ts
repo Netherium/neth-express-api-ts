@@ -21,7 +21,7 @@ export class AuthController {
   /** AuthController.login() */
   public async getToken(req: Request, res: Response) {
     try {
-      const userEntry: any = await UserModel.findOne({email: req.body.email}).populate('role');
+      const userEntry: any = await UserModel.findOne({email: req.body.email}).populate('role').exec();
       if (!userEntry || !req.body.password || !userEntry.validPassword(req.body.password)) {
         return HTTP_UNAUTHORIZED(res);
       }
@@ -48,7 +48,7 @@ export class AuthController {
   /** AuthController.register() */
   public async create(req: Request, res: Response): Promise<Response> {
     try {
-      const publicRole = await RoleModel.findOne({isAuthenticated: false});
+      const publicRole = await RoleModel.findOne({isAuthenticated: false}).exec();
       const userEntry = new UserModel({
         email: req.body.email,
         name: req.body.name,
@@ -69,7 +69,7 @@ export class AuthController {
   public async update(req: Request, res: Response) {
     const authUser = res.locals.authUser;
     try {
-      const userFound = await UserModel.findById(authUser._id);
+      const userFound = await UserModel.findById(authUser._id).exec();
       if (!userFound) {
         return HTTP_NOT_FOUND(res);
       }
@@ -92,7 +92,7 @@ export class AuthController {
   public async delete(req: Request, res: Response) {
     const id = res.locals.authUser;
     try {
-      const userDeleted = await UserModel.findByIdAndDelete(id);
+      const userDeleted = await UserModel.findByIdAndDelete(id).exec();
       if (!userDeleted) {
         return HTTP_NOT_FOUND(res);
       }
@@ -134,7 +134,7 @@ export class AuthController {
       isVerified: true,
       password: process.env.ADMIN_PASSWORD,
     });
-    const userExists = await UserModel.findOne({email: adminUserEntry.get('email')});
+    const userExists = await UserModel.findOne({email: adminUserEntry.get('email')}).exec();
     const rolesExist = await RoleModel.findOne({
       $or: [
         {name: publicRoleEntry.get('name')},

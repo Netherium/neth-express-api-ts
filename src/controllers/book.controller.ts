@@ -85,7 +85,7 @@ export class BookController {
   public async delete(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const bookDeleted = await BookModel.findByIdAndDelete(id);
+      const bookDeleted = await BookModel.findByIdAndDelete(id).exec();
       if (!bookDeleted) {
         return HTTP_NOT_FOUND(res);
       }

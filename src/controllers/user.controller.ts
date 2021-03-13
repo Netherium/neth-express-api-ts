@@ -53,7 +53,7 @@ export class UserController {
   public async update(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const userFound = await UserModel.findById(id);
+      const userFound = await UserModel.findById(id).exec();
       if (!userFound) {
         return HTTP_NOT_FOUND(res);
       }
@@ -78,7 +78,7 @@ export class UserController {
   public async delete(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const userDeleted = await UserModel.findByIdAndDelete(id);
+      const userDeleted = await UserModel.findByIdAndDelete(id).exec();
       if (!userDeleted) {
         return HTTP_NOT_FOUND(res);
       }

@@ -21,7 +21,7 @@ export class RoleController {
   public async show(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const roleEntry = await RoleModel.findOne({_id: id});
+      const roleEntry = await RoleModel.findOne({_id: id}).exec();
       if (!roleEntry) {
         return HTTP_NOT_FOUND(res);
       }
@@ -56,7 +56,7 @@ export class RoleController {
       ...(req.body.description !== undefined) && {description: req.body.description}
     };
     try {
-      const roleUpdated = await RoleModel.findByIdAndUpdate(id, roleUpdateData, {new: true});
+      const roleUpdated = await RoleModel.findByIdAndUpdate(id, roleUpdateData, {new: true}).exec();
       if (!roleUpdated) {
         return HTTP_NOT_FOUND(res);
       }
@@ -71,7 +71,7 @@ export class RoleController {
   public async delete(req: Request, res: Response): Promise<Response> {
     const id = req.params.id;
     try {
-      const roleDeleted = await RoleModel.findByIdAndDelete(id);
+      const roleDeleted = await RoleModel.findByIdAndDelete(id).exec();
       if (!roleDeleted) {
         return HTTP_NOT_FOUND(res);
       }
