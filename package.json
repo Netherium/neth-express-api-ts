@@ -7,14 +7,14 @@
     "dev": "nodemon --exec ts-node -T ./src/server.ts",
     "build": "tsc && echo true > .buildstatus",
     "run:prod": "npm run build && SET NODE_ENV=production&&node dist/server.js",
-    "test": "mocha -r ts-node/register tests/*.test.ts --timeout 30000 --exit",
+    "test": "mocha -r ts-node/register/transpile-only tests/*.test.ts --timeout 30000 --exit",
     "test:coverage": "nyc npm run test",
     "make:badges": "jest-badges-readme",
     "make:readme": "npm run test:coverage && npm run make:badges"
   },
   "nodemonConfig": {
     "watch": [
-      "./swagger.yaml",
+      "./swagger.ts",
       "src/**/*.ts"
     ],
     "ignore": [
@@ -59,7 +59,7 @@
     "npm": ">=6.0.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.858.0",
+    "aws-sdk": "^2.863.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -68,7 +68,7 @@
     "express-fileupload": "^1.2.1",
     "filenamify": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.19",
+    "mongoose": "^5.12.0",
     "mongoose-fuzzy-searching": "^2.0.2",
     "morgan": "^1.10.0",
     "sharp": "^0.27.2",
@@ -91,9 +91,9 @@
     "@types/sharp": "^0.27.1",
     "@types/swagger-ui-express": "^4.1.2",
     "@types/yamljs": "^0.2.31",
-    "chai": "^4.3.3",
+    "chai": "^4.3.4",
     "chai-http": "^4.3.0",
-    "mocha": "^8.3.1",
+    "mocha": "^8.3.2",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
     "ts-node": "^9.1.1",

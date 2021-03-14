@@ -5,10 +5,10 @@ export const queryBuilderCollection = async (req: Request, model: Model<any>, po
   let limit = 10;
   let page = 1;
   let query = model.find();
-  let hasfuzzySearch = false;
+  let hasFuzzySearch = false;
   if (Object.keys(req.query).length > 0) {
     if (req.query.q && typeof req.query.q !== 'undefined') {
-      hasfuzzySearch = true;
+      hasFuzzySearch = true;
       // @ts-ignore
       query = model.fuzzySearch(req.query.q);
       delete req.query.q;
@@ -67,7 +67,7 @@ export const queryBuilderCollection = async (req: Request, model: Model<any>, po
     }
   }
   const results = await query.exec();
-  const total = hasfuzzySearch ? results.length : await model.countDocuments();
+  const total = hasFuzzySearch ? results.length : await model.countDocuments();
   return {
     totalItems: total,
     data: results
