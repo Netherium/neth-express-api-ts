@@ -18,10 +18,7 @@
       "src/**/*.ts"
     ],
     "ignore": [
-      "src/**/*.spec.ts"
-    ],
-    "extension": [
-      "yaml"
+      "tests/**/*.ts"
     ]
   },
   "nyc": {
