@@ -7,8 +7,7 @@ import * as cors from 'cors';
 import * as mongoose from 'mongoose';
 import * as errorHandler from 'errorhandler';
 import * as swaggerUI from 'swagger-ui-express';
-import { SwaggerUiOptions } from 'swagger-ui-express';
-import * as yaml from 'yamljs';
+import { swaggerDoc } from '../swagger';
 /**
  * Import Routes, Services, Helpers
  */
@@ -24,6 +23,7 @@ import { RootRoute } from './routes/root.route';
 import { UserRoute } from './routes/user.route';
 import { EndpointRoute } from './routes/endpoint.route';
 import { BookRoute } from './routes/book.route';
+import { getApiURL } from './helpers/server.utils';
 
 class App {
   public express: express.Application;
@@ -34,6 +34,7 @@ class App {
     this.middleware();
     this.enableCors();
     this.routes();
+    this.setupSwagger();
     this.registerServices();
     this.registerHttpExceptions();
     this.launch();
@@ -66,8 +67,8 @@ class App {
    * Register Middleware
    */
   private middleware() {
-    this.express.set('port', process.env.PORT);
     this.express.set('address', process.env.ADDRESS);
+    this.express.set('port', process.env.PORT);
     // TODO Missing proper compression with filter
     this.express.use(compression());
     this.express.use(express.urlencoded({extended: true}));
@@ -93,24 +94,37 @@ class App {
    * Register routes
    */
   private routes() {
-    this.express.use('/', new RootRoute().router);
-    const options: SwaggerUiOptions = {
-      customSiteTitle: 'Neth-Express-Api-TS',
-      swaggerOptions: {
-        layout: 'BaseLayout',
-      }
-    };
-    this.express.use('/api/docs', swaggerUI.serve, swaggerUI.setup(yaml.load('./swagger.yaml'), options));
     if (process.env.UPLOAD_PROVIDER === 'local') {
       this.express.use('/uploads', express.static(process.env.UPLOAD_PROVIDER_FOLDER));
     }
-    this.express.use('/api/auth', new AuthRoute().router);
-    this.express.use('/api/users', new UserRoute().router);
-    this.express.use('/api/resource-permissions', new ResourcePermissionRoute().router);
-    this.express.use('/api/roles', new RoleRoute().router);
-    this.express.use('/api/media-objects', new MediaObjectRoute().router);
-    this.express.use('/api/endpoints', new EndpointRoute().router);
-    this.express.use('/api/books', new BookRoute().router);
+    this.express.use('/', new RootRoute().router);
+    this.express.use(`/${process.env.API_NAME}/auth`, new AuthRoute().router);
+    this.express.use(`/${process.env.API_NAME}/users`, new UserRoute().router);
+    this.express.use(`/${process.env.API_NAME}/resource-permissions`, new ResourcePermissionRoute().router);
+    this.express.use(`/${process.env.API_NAME}/roles`, new RoleRoute().router);
+    this.express.use(`/${process.env.API_NAME}/media-objects`, new MediaObjectRoute().router);
+    this.express.use(`/${process.env.API_NAME}/endpoints`, new EndpointRoute().router);
+    this.express.use(`/${process.env.API_NAME}/books`, new BookRoute().router);
+  }
+
+  /**
+   * Setup Swagger and inject server configuration as defined in .env
+   */
+  private setupSwagger() {
+    const options: swaggerUI.SwaggerUiOptions = {
+      customSiteTitle: process.env.SITE_TITLE,
+      swaggerOptions: {
+        layout: 'BaseLayout',
+        tryItOutEnabled: true
+      }
+    };
+    swaggerDoc.info.title = process.env.SITE_TITLE;
+    swaggerDoc.servers = [
+      {
+        url: getApiURL()
+      }
+    ];
+    this.express.use(`/${process.env.API_NAME}/docs`, swaggerUI.serve, swaggerUI.setup(swaggerDoc, options));
   }
 
   /**

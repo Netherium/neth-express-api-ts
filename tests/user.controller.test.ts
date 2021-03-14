@@ -86,9 +86,7 @@ describe('Users', () => {
       const res = await chai.request(app)
         .get('/api/users')
         .set('Authorization', 'Bearer ' + tokenSimple);
-      res.should.have.status(401);
-      res.body.should.have.property('message').eql('Unauthorized');
-
+      res.should.have.status(403);
     });
   });
   describe('/GET users/:id', () => {

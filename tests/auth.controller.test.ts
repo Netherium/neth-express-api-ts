@@ -88,7 +88,7 @@ describe('Auth', () => {
     it('it should prevent access to profile with wrong token', async () => {
       const res = await chai.request(app)
         .get('/api/auth/profile');
-      res.should.have.status(403);
+      res.should.have.status(401);
       res.body.should.be.a('object');
       res.body.should.have.property('message');
     });

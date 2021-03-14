@@ -1,3 +1,5 @@
+import { getApiURL } from '../src/helpers/server.utils';
+
 process.env.NODE_ENV = 'test';
 import * as chai from 'chai';
 import chaiHttp = require('chai-http');
@@ -15,7 +17,7 @@ describe('Base Routes', () => {
       res.should.have.status(200);
       res.body.should.be.a('object');
       res.body.should.have.property('message')
-        .eql(`Welcome to Neth-Express-Api-TS. You can find endpoints documentation http://${process.env.ADDRESS}:${process.env.PORT}/api/docs`);
+        .eql(`Welcome to ${process.env.SITE_TITLE}. You can find endpoints documentation ${getApiURL()}/docs`);
     });
   });
   describe('/GET not found', () => {
