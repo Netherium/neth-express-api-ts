@@ -73,12 +73,12 @@
 - Typescript Intellisense Awesomeness
 - Robust routing and middleware based on same principles of Express
 - MongoDB integration
-- ~~Elasticsearch integration~~ (soon™), replaced with 'mongoose-fuzzy-searching'
+- Fuzzy search with 'mongoose-fuzzy-searching'
 - Protected routes, ACL based with middleware, using [`jwt-token`](https://jwt.io/)
 - File Upload routes and thumbnail generator
 - Test and Coverage
 - REST API Documentation via [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
-- Various helper files and tools, i.e. CORS integration, swagger.yaml, .env environment setup
+- Various helper files and tools, i.e. CORS integration, swagger.ts, .env environment setup
 - Several scripts for easy development and testing
 
 
@@ -188,7 +188,7 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
     │                       
     ├── test                # Automated tests `npm run test`
     │
-    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml format
+    ├── swagger.ts          # Swagger documentation (`api/docs`) defined in typescript format
     ├── LICENSE             # License file
     └── README.md           # This File
 

@@ -4,7 +4,7 @@
 <h4 align="center">A RESTful API written in Typescript using <a href="https://github.com/expressjs/express" target="_blank">Express</a></h4>
 <h5 align="center">JWT auth, Access-Control Lists (ACL), Uploads, MongoDB in one :package: </h5>
 <div align="center">
-    <img src="https://img.shields.io/badge/Coverage-93.56%25-brightgreen.svg" alt="Lines Covered">
+    <img src="https://img.shields.io/badge/Coverage-93.77%25-brightgreen.svg" alt="Lines Covered">
     <img src="https://img.shields.io/badge/Build-Passing-brightgreen.svg" alt="Build Status">
     <img src="https://img.shields.io/badge/Node-%3E=12.0.0-grey?logo=node.js&color=339933" alt="Node Version Required">
     <img src="https://img.shields.io/badge/Built%20with-Typescript-blue" alt="Built with Typescript">
@@ -73,12 +73,12 @@
 - Typescript Intellisense Awesomeness
 - Robust routing and middleware based on same principles of Express
 - MongoDB integration
-- ~~Elasticsearch integration~~ (soon™), replaced with 'mongoose-fuzzy-searching'
+- Fuzzy search with 'mongoose-fuzzy-searching'
 - Protected routes, ACL based with middleware, using [`jwt-token`](https://jwt.io/)
 - File Upload routes and thumbnail generator
 - Test and Coverage
 - REST API Documentation via [swagger-ui-express](https://www.npmjs.com/package/swagger-ui-express)
-- Various helper files and tools, i.e. CORS integration, swagger.yaml, .env environment setup
+- Various helper files and tools, i.e. CORS integration, swagger.ts, .env environment setup
 - Several scripts for easy development and testing
 
 
@@ -188,7 +188,7 @@ Follow the structure below. It will keep things and your mind tidy :blossom:
     │                       
     ├── test                # Automated tests `npm run test`
     │
-    ├── swagger.yaml        # Swagger documentation (`api/docs`) defined in yaml format
+    ├── swagger.ts          # Swagger documentation (`api/docs`) defined in typescript format
     ├── LICENSE             # License file
     └── README.md           # This File
 
