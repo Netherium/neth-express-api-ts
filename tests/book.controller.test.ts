@@ -140,7 +140,7 @@ describe('Books', () => {
       const res = await chai.request(app)
         .get(`/api/books/1234`);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/POST books', () => {
@@ -187,7 +187,7 @@ describe('Books', () => {
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(book1Details);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/DELETE books/:id', () => {
@@ -208,7 +208,7 @@ describe('Books', () => {
         .delete(`/api/books/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   after(async () => {

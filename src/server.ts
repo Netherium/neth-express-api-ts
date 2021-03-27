@@ -7,11 +7,10 @@ import * as cors from 'cors';
 import * as mongoose from 'mongoose';
 import * as errorHandler from 'errorhandler';
 import * as swaggerUI from 'swagger-ui-express';
-import { swaggerDoc } from '../swagger';
-/**
- * Import Routes, Services, Helpers
- */
+import * as yaml from 'yamljs';
 import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from './helpers/http.responses';
+import { getApiURL } from './helpers/server.utils';
+import { OpenApiV3Object } from './models/open-api-v3-object.model';
 import { Auth } from './middleware/auth';
 import { UploadService } from './services/upload.service';
 import { EndpointService } from './services/endpoint.service';
@@ -23,7 +22,6 @@ import { RootRoute } from './routes/root.route';
 import { UserRoute } from './routes/user.route';
 import { EndpointRoute } from './routes/endpoint.route';
 import { BookRoute } from './routes/book.route';
-import { getApiURL } from './helpers/server.utils';
 
 class App {
   public express: express.Application;
@@ -69,7 +67,6 @@ class App {
   private middleware() {
     this.express.set('address', process.env.ADDRESS);
     this.express.set('port', process.env.PORT);
-    // TODO Missing proper compression with filter
     this.express.use(compression());
     this.express.use(express.urlencoded({extended: true}));
     this.express.use(express.json());
@@ -118,6 +115,7 @@ class App {
         tryItOutEnabled: true
       }
     };
+    const swaggerDoc = yaml.load('./swagger.yaml') as OpenApiV3Object;
     swaggerDoc.info.title = process.env.SITE_TITLE;
     swaggerDoc.servers = [
       {
@@ -153,7 +151,6 @@ class App {
    * Connect to DB and launch app
    */
   private launch() {
-    // tslint:disable-next-line:object-literal-type-assertion
     const mongooseOptions: mongoose.ConnectionOptions = {
       useNewUrlParser: true,
       useCreateIndex: true,
@@ -171,7 +168,7 @@ class App {
           this.express.emit('Express_TS_Started');
         });
       })
-      .catch((err) => {
+      .catch((err: any) => {
         console.error(`MongoDB cannot connect at ${process.env.MONGODB_URL}\nError: ${err}`);
         process.exit(1);
       });

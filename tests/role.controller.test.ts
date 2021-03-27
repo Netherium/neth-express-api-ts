@@ -96,7 +96,7 @@ describe('Roles', () => {
         .get(`/api/roles/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/POST roles', () => {
@@ -138,7 +138,7 @@ describe('Roles', () => {
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(role1Details);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/DELETE roles/:id', () => {
@@ -159,7 +159,7 @@ describe('Roles', () => {
         .delete(`/api/roles/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
 });

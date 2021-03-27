@@ -104,7 +104,7 @@ describe('Uploads Provider: local', () => {
         .get(`/api/media-objects/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/POST media-objects', () => {
@@ -150,7 +150,7 @@ describe('Uploads Provider: local', () => {
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(mediaObjectModifiedDetails);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/DELETE uploads/:id', () => {
@@ -171,7 +171,7 @@ describe('Uploads Provider: local', () => {
         .delete(`/api/media-objects/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   after(async () => {

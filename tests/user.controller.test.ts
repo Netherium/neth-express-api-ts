@@ -118,7 +118,7 @@ describe('Users', () => {
         .get(`/api/users/1234`)
         .set('Authorization', 'Bearer ' + tokenAdmin);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/POST users', () => {
@@ -176,7 +176,7 @@ describe('Users', () => {
         .set('Authorization', 'Bearer ' + tokenAdmin)
         .send(modifiedUserDetails);
       res.should.have.status(500);
-      res.body.should.have.property('message').eqls('Server Error');
+      res.body.should.have.property('message').eqls('Internal Server Error');
     });
   });
   describe('/DELETE users/:id', () => {
