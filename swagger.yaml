@@ -617,14 +617,6 @@ paths:
         - Bearer: []
 components:
   responses:
-    HTTP_CREATED:
-      description: "Created"
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: "#/components/schemas/User"
-              - $ref: "#/components/schemas/Role"
     HTTP_NO_CONTENT:
       description: "No Content"
       content:
