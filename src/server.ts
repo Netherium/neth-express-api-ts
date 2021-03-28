@@ -10,7 +10,7 @@ import * as swaggerUI from 'swagger-ui-express';
 import * as yaml from 'yamljs';
 import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from './helpers/http.responses';
 import { getApiURL } from './helpers/server.utils';
-import { OpenApiV3Object } from './models/open-api-v3-object.model';
+import { OpenApiV3Object } from './models/open-api-v3-object.interface';
 import { Auth } from './middleware/auth';
 import { UploadService } from './services/upload.service';
 import { EndpointService } from './services/endpoint.service';

@@ -691,7 +691,17 @@ components:
       required: false
       explode: true
       allowEmptyValue: false
-      description: "Filter by 'fieldName_suffix':'filteringValue', <b>i.e.</b> <code>{ 'email_eq': 'test@test.com', 'price_gte: 150'}</code>.<br>Available Suffixes: <ul><li>_eq</li><li>_ne</li><li>_lt</li><li>_lte</li><li>_gt</li><li>_gte</li><ul>"
+      description: |
+        Filter by 'fieldName_suffix':'filteringValue', <b>i.e.</b><code>{'email_eq': 'test@test.com', 'price_gte':'150'}</code>.
+
+        Available Suffixes:
+
+        * _eq
+        * _ne
+        * _lt
+        * _lte
+        * _gt
+        * _gte
       schema:
         type: object
         default: "{}"
