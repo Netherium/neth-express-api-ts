@@ -1,7 +1,7 @@
 import { Request } from 'express';
-import { Model, QueryPopulateOptions } from 'mongoose';
+import { Model, PopulateOptions } from 'mongoose';
 
-export const queryBuilderCollection = async (req: Request, model: Model<any>, populateOptions: QueryPopulateOptions[] = []) => {
+export const queryBuilderCollection = async (req: Request, model: Model<any>, populateOptions: PopulateOptions[] = []) => {
   let limit = 10;
   let page = 1;
   let query = model.find();
