@@ -48,6 +48,7 @@ userSchema.virtual('password')
   })
   .get(function () {
     const user: any = this;
+
     return user.hash;
   });
 
@@ -56,31 +57,32 @@ userSchema.set('toJSON', {
     delete ret.__v;
     delete ret.salt;
     delete ret.hash;
+
     return ret;
   }
 });
 
-// tslint:disable:only-arrow-functions
 userSchema.methods.validPassword = function (password: any) {
   const user: any = this;
   const hash = getHashedPassword(password, user.salt);
   return user.hash === hash;
 };
 
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 userSchema.methods.validateJWT = function (token: string) {
   return jwt.decode(token);
 };
 
 userSchema.methods.generateJWT = async function () {
   const expiry = new Date();
-  expiry.setDate(parseInt(expiry.getDate() + process.env.JWT_EXPIRATION, 10));
+  const jwtExpiration = parseInt(process.env.JWT_EXPIRATION, 10);
+  expiry.setDate(expiry.getDate() + jwtExpiration);
   const user: any = this;
   return jwt.sign({
     _id: user._id,
     email: user.email,
     name: user.name,
     role: user.role.name,
-    // tslint:disable-next-line:no-bitwise
     exp: ~~(expiry.getTime() / 1000)
   }, process.env.secret);
 };

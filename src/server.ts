@@ -159,17 +159,16 @@ class App {
     };
     mongoose.connect(process.env.MONGODB_URL, mongooseOptions)
       .then(() => {
-        // tslint:disable-next-line:no-console
         console.info(`MongoDB connected at ${process.env.MONGODB_URL}`);
         this.express.listen(this.express.get('port'), this.express.get('address'), async () => {
-          // tslint:disable-next-line
+          // eslint-disable-next-line max-len
           console.info(`API running at http://${this.express.get('address')}:${this.express.get('port')} in ${this.express.get('env')} mode`);
           await Auth.updateAppPermissions(null, this.express);
           this.express.emit('Express_TS_Started');
         });
       })
       .catch((err: any) => {
-        console.error(`MongoDB cannot connect at ${process.env.MONGODB_URL}\nError: ${err}`);
+        console.warn(`MongoDB cannot connect at ${process.env.MONGODB_URL}\nError: ${err}`);
         process.exit(1);
       });
   }

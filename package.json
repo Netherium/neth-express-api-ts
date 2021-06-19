@@ -5,6 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "dev": "nodemon --exec ts-node -T ./src/server.ts",
+    "lint": "eslint ./src",
     "build": "tsc && echo true > .buildstatus",
     "run:prod": "npm run build && SET NODE_ENV=production&&node dist/server.js",
     "test": "mocha -r ts-node/register/transpile-only tests/*.test.ts --timeout 30000 --exit",
@@ -88,13 +89,16 @@
     "@types/sharp": "^0.28.3",
     "@types/swagger-ui-express": "^4.1.2",
     "@types/yamljs": "^0.2.31",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
+    "eslint": "^7.29.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "mocha": "^9.0.1",
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0",
     "ts-node": "^10.0.0",
-    "tslint": "^6.1.3",
     "typescript": "^4.3.4"
   }
 }

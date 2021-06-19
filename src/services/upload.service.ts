@@ -4,8 +4,8 @@ import { basename, extname } from 'path';
 import * as filenamify from 'filenamify';
 import { promises as fs } from 'fs';
 import * as AWS from 'aws-sdk';
-import sharp = require('sharp');
 import { MediaObject } from '../models/media-object.interface';
+import sharp = require('sharp');
 
 export class UploadService {
   public isLocalProvider: boolean;
@@ -47,7 +47,7 @@ export class UploadService {
     }
   }
 
-  public async uploadFile(file: UploadedFile, alternativeText: string = null, caption: string = null) {
+  public async uploadFile(file: UploadedFile, alternativeText: string = null, caption: string = null): Promise<MediaObject> {
     try {
       const {mediaObject, fileBuffer, thumbBuffer} = await this.getMediaObjectData(file, alternativeText, caption);
       if (this.isLocalProvider) {
@@ -58,7 +58,6 @@ export class UploadService {
       } else {
         await UploadService.remoteProviderHandler(`${mediaObject.path}`, mediaObject.mime, fileBuffer, 'put');
         if (mediaObject.hasOwnProperty('thumbnail')) {
-          // tslint:disable-next-line:max-line-length
           await UploadService.remoteProviderHandler(`${mediaObject.thumbnail.path}`, mediaObject.thumbnail.mime, thumbBuffer, 'put');
         }
       }
@@ -68,7 +67,7 @@ export class UploadService {
     }
   }
 
-  public async deleteFile(mediaObject: MediaObject) {
+  public async deleteFile(mediaObject: MediaObject): Promise<boolean> {
     try {
       if (this.isLocalProvider) {
         await UploadService.localProviderHandler(`./${mediaObject.path}`, null, 'delete');
@@ -78,7 +77,6 @@ export class UploadService {
       } else {
         await UploadService.remoteProviderHandler(`${mediaObject.path}`, mediaObject.mime, null, 'delete');
         if (mediaObject.hasOwnProperty('thumbnail')) {
-          // tslint:disable-next-line:max-line-length
           await UploadService.remoteProviderHandler(`${mediaObject.thumbnail.path}`, mediaObject.thumbnail.mime, null, 'delete');
         }
       }
@@ -88,8 +86,8 @@ export class UploadService {
     }
   }
 
-  // tslint:disable-next-line:max-line-length
-  private async getMediaObjectData(file: UploadedFile, alternativeText: string, caption: string): Promise<{ mediaObject: MediaObject, fileBuffer: Buffer, thumbBuffer: Buffer }> {
+  private async getMediaObjectData(file: UploadedFile, alternativeText: string, caption: string):
+    Promise<{ mediaObject: MediaObject, fileBuffer: Buffer, thumbBuffer: Buffer }> {
     const ext = extname(file.name);
     const baseFileName = filenamify(basename(file.name, ext));
     const hash = baseFileName + '_' + crypto.randomBytes(5).toString('hex');
@@ -122,9 +120,12 @@ export class UploadService {
     if (isMimeTypePhoto(mediaObject.mime)) {
       const metadata = await sharp(file.data).metadata();
       const thumbnailHash = `thumbnail_${hash}`;
-      // tslint:disable-next-line:max-line-length
-      const thumbnailPath = this.isLocalProvider ? `${process.env.UPLOAD_PROVIDER_FOLDER}/${thumbnailHash}${ext}` : `${thumbnailHash}${ext}`;
-      const thumbnailUrl = this.isLocalProvider ? `http://${process.env.ADDRESS}:${process.env.PORT}/${thumbnailPath}` : `https://${process.env.UPLOAD_PROVIDER_BUCKET}.${process.env.UPLOAD_PROVIDER_ENDPOINT}/${thumbnailPath}`;
+      const thumbnailPath = this.isLocalProvider
+        ? `${process.env.UPLOAD_PROVIDER_FOLDER}/${thumbnailHash}${ext}`
+        : `${thumbnailHash}${ext}`;
+      const thumbnailUrl = this.isLocalProvider
+        ? `http://${process.env.ADDRESS}:${process.env.PORT}/${thumbnailPath}`
+        : `https://${process.env.UPLOAD_PROVIDER_BUCKET}.${process.env.UPLOAD_PROVIDER_ENDPOINT}/${thumbnailPath}`;
       thumbBuffer = await sharp(file.data).resize(80, 80).toBuffer();
       const thumbnailMetadata = await sharp(thumbBuffer).metadata();
       mediaObject = {
@@ -147,7 +148,7 @@ export class UploadService {
   }
 }
 
-export function isMimeTypePhoto(mime: string) {
+export const isMimeTypePhoto = (mime: string): boolean => {
   const photoTypes = [
     'image/bmp',
     'image/gif',
@@ -157,4 +158,4 @@ export function isMimeTypePhoto(mime: string) {
     'image/webp'
   ];
   return photoTypes.indexOf(mime) > -1;
-}
+};
