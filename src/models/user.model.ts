@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import * as jwt from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import * as crypto from 'crypto';
 
 const fuzzySearching = require('mongoose-fuzzy-searching');
@@ -62,18 +63,18 @@ userSchema.set('toJSON', {
   }
 });
 
-userSchema.methods.validPassword = function (password: any) {
+userSchema.methods.validPassword = function (password: any): boolean {
   const user: any = this;
   const hash = getHashedPassword(password, user.salt);
   return user.hash === hash;
 };
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-userSchema.methods.validateJWT = function (token: string) {
+userSchema.methods.validateJWT = function (token: string): null | JwtPayload | string {
   return jwt.decode(token);
 };
 
-userSchema.methods.generateJWT = async function () {
+userSchema.methods.generateJWT = async function (): Promise<string> {
   const expiry = new Date();
   const jwtExpiration = parseInt(process.env.JWT_EXPIRATION, 10);
   expiry.setDate(expiry.getDate() + jwtExpiration);

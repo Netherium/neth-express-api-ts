@@ -5,7 +5,8 @@ import * as filenamify from 'filenamify';
 import { promises as fs } from 'fs';
 import * as AWS from 'aws-sdk';
 import { MediaObject } from '../models/media-object.interface';
-import sharp = require('sharp');
+import * as sharp from 'sharp';
+import { PromiseResult } from 'aws-sdk/lib/request';
 
 export class UploadService {
   public isLocalProvider: boolean;
@@ -14,15 +15,16 @@ export class UploadService {
     this.isLocalProvider = !(process.env.UPLOAD_PROVIDER === 'do' || process.env.UPLOAD_PROVIDER === 'aws');
   }
 
-  private static async localProviderHandler(localPath: string, data: Buffer, action: 'put' | 'delete') {
+  private static async localProviderHandler(localPath: string, data: Buffer, action: 'put' | 'delete'): Promise<void> {
     if (action === 'put') {
-      return await fs.writeFile(localPath, data);
+      await fs.writeFile(localPath, data);
     } else if (action === 'delete') {
-      return await fs.unlink(localPath);
+      await fs.unlink(localPath);
     }
   }
 
-  private static async remoteProviderHandler(path: string, mime: string, data: Buffer, action: 'put' | 'delete') {
+  private static async remoteProviderHandler(path: string, mime: string, data: Buffer, action: 'put' | 'delete'):
+    Promise<PromiseResult<any, any>> {
     const s3 = new AWS.S3({
         endpoint: process.env.UPLOAD_PROVIDER_ENDPOINT,
         accessKeyId: process.env.UPLOAD_PROVIDER_KEY,
@@ -63,7 +65,7 @@ export class UploadService {
       }
       return mediaObject;
     } catch (err) {
-      throw Error(err);
+      throw Error('Cannot upload file');
     }
   }
 
@@ -82,7 +84,7 @@ export class UploadService {
       }
       return true;
     } catch (err) {
-      throw Error(err);
+      throw Error('Cannot delete file');
     }
   }
 

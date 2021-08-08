@@ -11,7 +11,7 @@ export class EndpointService {
     this.basePath = basePath;
   }
 
-  private static getMethodHandler(routeStack: any) {
+  private static getMethodHandler(routeStack: any): any {
     return routeStack.find((stackItem: any) => stackItem.name !== '<anonymous>');
   }
 

@@ -41,7 +41,7 @@ class App {
   /**
    * Load .env and set logging
    */
-  private setupEnvironment() {
+  private setupEnvironment(): void {
     switch (process.env.NODE_ENV) {
       case 'production': {
         config({path: resolve(__dirname, '../.env.production')});
@@ -64,7 +64,7 @@ class App {
   /**
    * Register Middleware
    */
-  private middleware() {
+  private middleware(): void {
     this.express.set('address', process.env.ADDRESS);
     this.express.set('port', process.env.PORT);
     this.express.use(compression());
@@ -75,7 +75,7 @@ class App {
   /**
    * Enable Cross-Origin Resource Sharing
    */
-  private enableCors() {
+  private enableCors(): void {
     const options: cors.CorsOptions = {
       allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'X-Access-Token', 'Authorization'],
       credentials: true,
@@ -90,7 +90,7 @@ class App {
   /**
    * Register routes
    */
-  private routes() {
+  private routes(): void {
     if (process.env.UPLOAD_PROVIDER === 'local') {
       this.express.use('/uploads', express.static(process.env.UPLOAD_PROVIDER_FOLDER));
     }
@@ -107,7 +107,7 @@ class App {
   /**
    * Setup Swagger and inject server configuration as defined in .env
    */
-  private setupSwagger() {
+  private setupSwagger(): void {
     const options: swaggerUI.SwaggerUiOptions = {
       customSiteTitle: process.env.SITE_TITLE,
       swaggerOptions: {
@@ -128,7 +128,7 @@ class App {
   /**
    * Register services
    */
-  private registerServices() {
+  private registerServices(): void {
     this.express.set('services', {
       uploadService: new UploadService(),
       endpointService: new EndpointService(this.express)
@@ -138,7 +138,7 @@ class App {
   /**
    * Register 404 / 400 responses
    */
-  private registerHttpExceptions() {
+  private registerHttpExceptions(): void {
     this.express.use((req: express.Request, res: express.Response) => {
       return HTTP_NOT_FOUND(res);
     });
@@ -150,7 +150,7 @@ class App {
   /**
    * Connect to DB and launch app
    */
-  private launch() {
+  private launch(): void {
     const mongooseOptions: mongoose.ConnectionOptions = {
       useNewUrlParser: true,
       useCreateIndex: true,
