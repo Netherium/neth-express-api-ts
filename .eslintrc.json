@@ -50,11 +50,10 @@
       }
     ],
     "no-console": [
-      "error",
+      "warn",
       {
         "allow": [
           "info",
-          "log",
           "warn",
           "error"
         ]

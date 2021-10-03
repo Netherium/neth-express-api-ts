@@ -168,7 +168,7 @@ class App {
         });
       })
       .catch((err: any) => {
-        console.warn(`MongoDB cannot connect at ${process.env.MONGODB_URL}\nError: ${err}`);
+        console.error(`MongoDB cannot connect at ${process.env.MONGODB_URL}\nError: ${err}`);
         process.exit(1);
       });
   }
