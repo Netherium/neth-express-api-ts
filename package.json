@@ -72,7 +72,7 @@
     "mongoose": "^5.13.11",
     "mongoose-fuzzy-searching": "^2.0.2",
     "morgan": "^1.10.0",
-    "sharp": "^0.29.1",
+    "sharp": "^0.30.5",
     "swagger-ui-express": "^4.1.6",
     "yamljs": "^0.3.0"
   },
