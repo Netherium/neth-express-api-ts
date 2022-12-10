@@ -65,7 +65,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "errorhandler": "^1.5.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-fileupload": "^1.2.1",
     "filenamify": "^4.3.0",
     "jsonwebtoken": "^8.5.1",
