@@ -68,7 +68,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "filenamify": "^4.3.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.13.11",
     "mongoose-fuzzy-searching": "^2.0.2",
     "morgan": "^1.10.0",
